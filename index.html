@@ -748,6 +748,17 @@
     .step-item.s-done .step-label    { color: var(--gray-900); }
     .step-item.s-current .step-sub   { color: var(--gray-700); font-weight: 600; }
 
+    .step-item.is-delivered .step-node {
+      background: var(--green, #10b981) !important;
+      border-color: var(--green, #10b981) !important;
+      color: #fff !important;
+      box-shadow: 0 0 0 5px rgba(16,185,129,.15) !important;
+      animation: none !important;
+    }
+    .step-item.is-delivered .step-label {
+      color: var(--green, #10b981) !important;
+    }
+
     /* People cards in panel */
     .person-row {
       display: flex;
@@ -1708,7 +1719,7 @@
 
       <div class="field">
         <label>Username</label>
-        <input type="text" id="adminUser" placeholder="admin" autocomplete="username">
+        <input type="text" id="adminUser" placeholder="username" autocomplete="username">
       </div>
 
       <div class="field">
@@ -1716,7 +1727,7 @@
         <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password">
       </div>
 
-      <div class="login-err hidden" id="loginErr">Incorrect credentials. Hint: admin / admin123</div>
+      <div class="login-err hidden" id="loginErr">Incorrect username or password.</div>
 
       <button class="btn-primary" id="loginBtn">Sign in</button>
     </div>
@@ -1992,7 +2003,6 @@
 
     /* ─── HELPERS ─── */
     const $ = id => document.getElementById(id);
-    const ADMIN_USER = 'admin', ADMIN_PASS = 'admin123';
 
     const STATUS_STEPS   = ['BOOKED','PICKED_UP','IN_TRANSIT','ARRIVED_AT_HUB','OUT_FOR_DELIVERY','DELIVERED'];
     const STATUS_LABELS  = { BOOKED:'Booked', PICKED_UP:'Picked Up', IN_TRANSIT:'In Transit', ARRIVED_AT_HUB:'Arrived at Destination Hub', OUT_FOR_DELIVERY:'Out for Delivery', DELIVERED:'Delivered', EXCEPTION:'Exception' };
@@ -2071,8 +2081,15 @@
         let cls = 'step-item';
         if (i < idx)  cls += ' s-done';
         if (i === idx) cls += ' s-current';
+
+        let nodeContent = i < idx ? '✓' : i + 1;
+        if (st === 'DELIVERED' && (i === idx || i < idx)) {
+          cls += ' is-delivered';
+          nodeContent = '✓';
+        }
+
         return `<div class="${cls}">
-          <div class="step-node">${i < idx ? '✓' : i + 1}</div>
+          <div class="step-node">${nodeContent}</div>
           <div class="step-label">${STATUS_LABELS[st]}</div>
           <div class="step-sub">${STATUS_SUB[st]}</div>
         </div>`;
@@ -2165,7 +2182,10 @@
     $('loginBtn').addEventListener('click', doLogin);
 
     function doLogin() {
-      if ($('adminUser').value.trim() === ADMIN_USER && $('adminPass').value === ADMIN_PASS) {
+      const u = btoa($('adminUser').value.trim());
+      const p = btoa($('adminPass').value);
+
+      if (u === 'dHdvd2F5YWRtaW4=' && p === 'YWRtaW43MjUyNTM=') {
         closeLogin();
         $('publicPage').style.display = 'none';
         $('adminShell').style.display = 'block';
