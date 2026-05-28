@@ -1609,8 +1609,7 @@
 
       <div class="nav-links">
         <a href="#" id="navTrackLink">Track</a>
-        <a href="mailto:support@twowaycargo.in">Support</a>
-        <button class="nav-btn" id="adminTrigger">Admin Login</button>
+        <a href="mailto:contact@twowaycargo.in">Support</a>
       </div>
     </div>
   </nav>
@@ -1997,7 +1996,7 @@
 
     const STATUS_STEPS   = ['BOOKED','PICKED_UP','IN_TRANSIT','ARRIVED_AT_HUB','OUT_FOR_DELIVERY','DELIVERED'];
     const STATUS_LABELS  = { BOOKED:'Booked', PICKED_UP:'Picked Up', IN_TRANSIT:'In Transit', ARRIVED_AT_HUB:'Arrived at Destination Hub', OUT_FOR_DELIVERY:'Out for Delivery', DELIVERED:'Delivered', EXCEPTION:'Exception' };
-    const STATUS_SUB     = { BOOKED:'Your parcel has been booked at TWO WAY', PICKED_UP:'Parcel has been picked up from sender', IN_TRANSIT:'Parcel is on the way to destination', ARRIVED_AT_HUB:'Parcel arrived at destination hub', OUT_FOR_DELIVERY:'Parcel is out for delivery', DELIVERED:'Parcel has been successfully delivered', EXCEPTION:'There is an issue with your parcel' };
+    const STATUS_SUB     = { BOOKED:'Your parcel has been booked at TWO WAY', PICKED_UP:'Parcel has been picked up from office', IN_TRANSIT:'Parcel is on the way to destination', ARRIVED_AT_HUB:'Parcel arrived at destination hub', OUT_FOR_DELIVERY:'Parcel is out for delivery', DELIVERED:'Parcel has been successfully delivered', EXCEPTION:'There is an issue with your parcel' };
     const STATUS_CLASSES = { DELIVERED:'badge-DELIVERED', IN_TRANSIT:'badge-IN_TRANSIT', ARRIVED_AT_HUB:'badge-ARRIVED_AT_HUB', OUT_FOR_DELIVERY:'badge-OUT_FOR_DELIVERY', BOOKED:'badge-BOOKED', PICKED_UP:'badge-PICKED_UP', EXCEPTION:'badge-EXCEPTION' };
 
     function badge(s) {
@@ -2148,12 +2147,11 @@
     }
 
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-       ADMIN LOGIN
+       ADMIN AUTH
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    $('adminTrigger').addEventListener('click', () => {
+    if (window.location.href.includes('tw-admin')) {
       $('loginOverlay').classList.add('show');
-      setTimeout(() => $('adminUser').focus(), 120);
-    });
+    }
 
     function closeLogin() {
       $('loginOverlay').classList.remove('show');
