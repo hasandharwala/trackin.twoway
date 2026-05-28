@@ -114,11 +114,13 @@
     .nav-logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      color: var(--gray-900);
-      font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: -.3px;
+    }
+
+    .nav-logo img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .nav-logo-mark {
@@ -934,10 +936,16 @@
     .sidebar-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
       padding: 8px 12px 24px;
       border-bottom: 1px solid var(--gray-100);
       margin-bottom: 16px;
+    }
+
+    .sidebar-brand img {
+      height: 34px;
+      width: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .sidebar-brand-name {
@@ -1329,7 +1337,13 @@
     .footer-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
+    }
+
+    .footer-left img {
+      height: 30px;
+      width: auto;
+      object-fit: contain;
     }
 
     .footer-copy { font-size: .8rem; color: var(--gray-400); }
@@ -1429,8 +1443,7 @@
   <nav class="nav" id="nav">
     <div class="nav-inner">
       <a href="#" class="nav-logo" id="navLogoLink">
-        <div class="nav-logo-mark">TW</div>
-        TWO WAY
+        <img src="logo.png" alt="Two Way Cargo and Movers" draggable="false">
       </a>
 
       <div class="nav-links">
@@ -1511,8 +1524,8 @@
     <!-- FOOTER -->
     <footer class="footer" id="footer">
       <div class="footer-left">
-        <div class="nav-logo-mark">TW</div>
-        <span class="footer-copy">© 2026 TWO WAY Logistics</span>
+        <img src="logo.png" alt="Two Way Cargo and Movers">
+        <span class="footer-copy">© 2026 TWO WAY Cargo and Movers. All rights reserved.</span>
       </div>
       <div class="footer-right">
         <a href="mailto:support@twowaycargo.in">support@twowaycargo.in</a>
@@ -1527,7 +1540,9 @@
   <div class="overlay" id="loginOverlay">
     <div class="modal-box">
       <button class="modal-close-btn" id="modalCloseBtn">✕</button>
-      <div class="modal-icon">🔐</div>
+      <div style="margin-bottom:20px;">
+        <img src="logo.png" alt="Two Way Cargo and Movers" style="height:44px;width:auto;object-fit:contain;display:block;">
+      </div>
       <div class="modal-title">Admin Access</div>
       <div class="modal-sub">Sign in to manage shipments and view reports.</div>
 
@@ -1571,8 +1586,7 @@
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-brand">
-          <div class="nav-logo-mark">TW</div>
-          <div class="sidebar-brand-name">TWO WAY Admin</div>
+          <img src="logo.png" alt="Two Way Cargo and Movers">
         </div>
 
         <div class="sidebar-section">Menu</div>
