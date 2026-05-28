@@ -2189,12 +2189,14 @@
     onAuthStateChanged(auth, user => {
       if (user) {
         closeLogin();
+        $('nav').style.display = 'none';
         $('publicPage').style.display = 'none';
         $('adminShell').style.display = 'block';
         loadAll();
       } else {
         $('adminShell').style.display = 'none';
         $('publicPage').style.display = 'block';
+        $('nav').style.display = 'flex';
       }
     });
 
