@@ -1718,8 +1718,8 @@
       <div class="modal-sub">Sign in to manage shipments and view reports.</div>
 
       <div class="field">
-        <label>Username</label>
-        <input type="text" id="adminUser" placeholder="username" autocomplete="username">
+        <label>Email Address</label>
+        <input type="email" id="adminUser" placeholder="admin@twowaycargo.in" autocomplete="username">
       </div>
 
       <div class="field">
@@ -1988,6 +1988,9 @@
       getFirestore, collection, addDoc, getDocs,
       updateDoc, deleteDoc, doc, query, where
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCOW_Y-AZrirAoW3-RIafPmNJI1dlNPmLA",
@@ -2000,6 +2003,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
+    const auth = getAuth(app);
 
     /* ─── HELPERS ─── */
     const $ = id => document.getElementById(id);
@@ -2181,33 +2185,57 @@
     $('adminPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
     $('loginBtn').addEventListener('click', doLogin);
 
-    function doLogin() {
-      const u = btoa($('adminUser').value.trim());
-      const p = btoa($('adminPass').value);
-
-      if (u === 'dHdvd2F5YWRtaW4=' && p === 'YWRtaW43MjUyNTM=') {
+    // Secure Session Listener
+    onAuthStateChanged(auth, user => {
+      if (user) {
         closeLogin();
         $('publicPage').style.display = 'none';
         $('adminShell').style.display = 'block';
         loadAll();
-        toast('Welcome back, Admin!', 'success');
       } else {
+        $('adminShell').style.display = 'none';
+        $('publicPage').style.display = 'block';
+      }
+    });
+
+    async function doLogin() {
+      const email = $('adminUser').value.trim();
+      const pass = $('adminPass').value;
+      const btn = $('loginBtn');
+      
+      if (!email || !pass) return;
+
+      btn.textContent = 'Signing in...';
+      btn.disabled = true;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        toast('Welcome back!', 'success');
+      } catch (err) {
+        console.error(err);
         $('loginErr').classList.remove('hidden');
         $('adminPass').value = '';
         document.querySelector('.modal-box').style.animation = 'none';
         requestAnimationFrame(() => {
           document.querySelector('.modal-box').style.animation = 'shake .35s';
         });
+      } finally {
+        btn.textContent = 'Sign in';
+        btn.disabled = false;
       }
     }
 
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        LOGOUT
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-    function doLogout() {
-      $('adminShell').style.display = 'none';
-      $('publicPage').style.display = 'block';
-      toast('Logged out.', 'success');
+    async function doLogout() {
+      try {
+        await signOut(auth);
+        toast('Logged out successfully.', 'success');
+      } catch (err) {
+        console.error(err);
+        toast('Error logging out.', 'error');
+      }
     }
 
     $('logoutBtn').addEventListener('click', doLogout);
