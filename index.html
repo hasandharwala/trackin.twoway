@@ -3,1006 +3,1625 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SWIFTPATH — Precision Logistics</title>
+  <title>TWO WAY — Precision Logistics</title>
+  <meta name="description" content="TWO WAY Logistics — Real-time shipment tracking for cargo, movers, and express delivery across 180+ cities." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
+    /* ══════════════════════════════════════════════════
+       DESIGN TOKENS
+    ══════════════════════════════════════════════════ */
     :root {
-      --bg-primary: #0A0A0F;
-      --bg-secondary: #111118;
-      --bg-glass: rgba(255,255,255,0.04);
-      --accent: #F5A623;
-      --accent-glow: rgba(245,166,35,0.15);
-      --text-primary: #F0F0F5;
-      --text-secondary: #8A8A9A;
-      --border: rgba(255,255,255,0.07);
-      --success: #22C55E;
-      --warning: #F59E0B;
-      --danger: #EF4444;
-      --info: #38BDF8;
-      --transition: cubic-bezier(0.4,0,0.2,1);
-      --shadow: 0 20px 40px rgba(0,0,0,0.4);
+      --white:   #ffffff;
+      --black:   #000000;
+      --gray-50: #f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-200:#e5e7eb;
+      --gray-300:#d1d5db;
+      --gray-400:#9ca3af;
+      --gray-500:#6b7280;
+      --gray-600:#4b5563;
+      --gray-700:#374151;
+      --gray-800:#1f2937;
+      --gray-900:#111827;
+      --gray-950:#030712;
+
+      --red:      #dc2626;
+      --red-light:#fee2e2;
+      --red-mid:  #fca5a5;
+
+      --green:    #16a34a;
+      --green-bg: #dcfce7;
+      --amber:    #d97706;
+      --amber-bg: #fef3c7;
+      --blue:     #2563eb;
+      --blue-bg:  #dbeafe;
+      --purple:   #7c3aed;
+
+      --radius-sm:  8px;
+      --radius-md:  12px;
+      --radius-lg:  16px;
+      --radius-xl:  24px;
+      --radius-2xl: 32px;
+
+      --shadow-sm:  0 1px 2px rgba(0,0,0,.05);
+      --shadow-md:  0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -2px rgba(0,0,0,.05);
+      --shadow-lg:  0 10px 15px -3px rgba(0,0,0,.07), 0 4px 6px -4px rgba(0,0,0,.05);
+      --shadow-xl:  0 20px 25px -5px rgba(0,0,0,.06), 0 8px 10px -6px rgba(0,0,0,.04);
+
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-out: cubic-bezier(0, 0, 0.2, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    * { margin:0; padding:0; box-sizing:border-box; }
+    /* ══════════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════════ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--white);
+      color: var(--gray-900);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      min-height: 100vh;
-      position: relative;
     }
 
-    body::before {
-      content: '';
+    button { font-family: inherit; border: none; cursor: pointer; }
+    input, select, textarea { font-family: inherit; }
+    a { text-decoration: none; }
+
+    .hidden { display: none !important; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* ══════════════════════════════════════════════════
+       NAVBAR
+    ══════════════════════════════════════════════════ */
+    .nav {
       position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(circle at center, rgba(245,166,35,0.03), transparent 50%),
-        linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
-      background-size: cover, 40px 40px, 40px 40px;
-      pointer-events: none;
-      z-index: -3;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      opacity: 0.02;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
-      pointer-events:none;
-      z-index:-2;
-    }
-
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      animation: drift 60s infinite alternate ease-in-out;
-      z-index: -1;
-    }
-
-    .orb1 {
-      width: 300px;
-      height: 300px;
-      background: rgba(245,166,35,0.06);
-      top: 5%;
-      left: -5%;
-    }
-
-    .orb2 {
-      width: 250px;
-      height: 250px;
-      background: rgba(255,255,255,0.04);
-      bottom: 5%;
-      right: -5%;
-      animation-delay: -15s;
-    }
-
-    .orb3 {
-      width: 220px;
-      height: 220px;
-      background: rgba(245,166,35,0.04);
-      top: 50%;
-      right: 20%;
-      animation-delay: -30s;
-    }
-
-    @keyframes drift {
-      0% { transform: translate(0,0) scale(1); }
-      50% { transform: translate(60px,-40px) scale(1.08); }
-      100% { transform: translate(-40px,50px) scale(0.95); }
-    }
-
-    .glass {
-      background: var(--bg-glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: var(--shadow);
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 1rem 5%;
-      transition: all .3s var(--transition);
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      transition: background .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
       border-bottom: 1px solid transparent;
     }
 
-    header.scrolled {
-      padding: .75rem 5%;
-      background: rgba(10,10,15,0.7);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(20px);
+    .nav.scrolled {
+      background: rgba(255,255,255,0.88);
+      border-color: var(--gray-200);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
     }
 
-    .header-inner {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:1rem;
+    .nav-inner {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .logo {
-      display:flex;
-      flex-direction:column;
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gray-900);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -.3px;
     }
 
-    .logo-top {
-      display:flex;
-      align-items:center;
-      gap:.6rem;
-      font-family:'Syne', sans-serif;
-      font-weight:800;
-      letter-spacing:1px;
-      font-size:1.25rem;
+    .nav-logo-mark {
+      width: 30px; height: 30px;
+      background: var(--red);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 800;
+      flex-shrink: 0;
     }
 
-    .logo-icon {
-      width:32px;
-      height:32px;
-      border-radius:10px;
-      background: linear-gradient(135deg, var(--accent), #ffd27d);
-      display:grid;
-      place-items:center;
-      color:#000;
-      font-weight:900;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
     }
 
-    .tagline {
-      font-size:.7rem;
-      color:var(--text-secondary);
-      margin-left:2.6rem;
+    .nav-links a {
+      color: var(--gray-500);
+      font-size: .875rem;
+      font-weight: 500;
+      transition: color .2s;
     }
 
-    nav {
-      display:flex;
-      align-items:center;
-      gap:1.5rem;
+    .nav-links a:hover { color: var(--gray-900); }
+
+    .nav-btn {
+      height: 36px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: var(--gray-900);
+      color: var(--white);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .2px;
+      transition: background .2s, transform .15s var(--ease-spring);
     }
 
-    nav a {
-      color:var(--text-secondary);
-      text-decoration:none;
-      transition:.25s;
-      font-size:.95rem;
+    .nav-btn:hover {
+      background: var(--gray-700);
+      transform: scale(1.03);
     }
 
-    nav a:hover { color: var(--text-primary); }
-
-    .admin-link {
-      font-size:.85rem;
-      opacity:.8;
-    }
-
+    /* ══════════════════════════════════════════════════
+       HERO
+    ══════════════════════════════════════════════════ */
     .hero {
-      min-height:70vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:5rem 1rem 3rem;
-      text-align:center;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .pill {
-      display:flex;
-      align-items:center;
-      gap:.6rem;
-      padding:.6rem 1rem;
-      border-radius:999px;
-      background: var(--accent);
-      color:#000;
-      font-weight:700;
-      margin-bottom:1.5rem;
-      animation: fadeUp .6s ease forwards;
+    /* Subtle mesh gradient background */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(220,38,38,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(37,99,235,.04) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 50% at 0% 100%, rgba(124,58,237,.03) 0%, transparent 50%);
+      pointer-events: none;
     }
 
-    .pulse-dot {
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:#000;
-      animation: pulse 1.6s infinite;
+    /* Dot grid */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--gray-300) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: .35;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 40%, transparent 100%);
+      pointer-events: none;
     }
 
-    @keyframes pulse {
-      0%,100% { transform: scale(1); opacity:1; }
-      50% { transform: scale(1.6); opacity:.5; }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 999px;
+      padding: 6px 14px 6px 8px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-sm);
+      animation: fadeUp .6s var(--ease-out) both;
+      position: relative;
     }
 
-    h1 {
-      font-family:'Syne', sans-serif;
-      font-size: clamp(2.8rem, 7vw, 5rem);
-      line-height:1.05;
-      margin-bottom:1rem;
-      animation: fadeUp .6s .1s both;
+    .live-dot {
+      width: 20px; height: 20px;
+      background: var(--red);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
     }
 
-    .accent { color: var(--accent); }
-
-    .hero p {
-      color: var(--text-secondary);
-      font-size:1.05rem;
-      max-width:680px;
-      margin-bottom:2rem;
-      animation: fadeUp .6s .2s both;
+    .live-dot::after {
+      content: '';
+      width: 7px; height: 7px;
+      background: #fff;
+      border-radius: 50%;
+      animation: breathe 2s infinite;
     }
 
-    .tracking-card {
-      width:min(100%, 640px);
-      padding:1rem;
-      border-radius:20px;
-      position:relative;
-      overflow:hidden;
-      animation: fadeUp .6s .3s both;
+    @keyframes breathe {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(.6); opacity: .7; }
     }
 
-    .tracking-card::before {
-      content:'';
-      position:absolute;
-      inset:0;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.08), transparent);
-      transform: translateX(-100%);
-      transition: .8s;
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 1.03;
+      letter-spacing: -2.5px;
+      color: var(--gray-950);
+      margin-bottom: 20px;
+      animation: fadeUp .7s .08s var(--ease-out) both;
+      position: relative;
     }
 
-    .tracking-card:focus-within::before {
-      transform: translateX(100%);
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--red) 0%, #ff6b35 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .tracking-row {
-      display:flex;
-      gap:1rem;
-      align-items:center;
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--gray-500);
+      font-weight: 400;
+      max-width: 520px;
+      margin-bottom: 48px;
+      animation: fadeUp .7s .16s var(--ease-out) both;
+      line-height: 1.65;
+      position: relative;
     }
 
-    .tracking-row input {
-      flex:1;
-      height:58px;
-      background:transparent;
-      border:none;
-      color:var(--text-primary);
-      font-size:1rem;
-      outline:none;
-      padding:0 1rem;
+    /* ══════════════════════════════════════════════════
+       SEARCH BOX
+    ══════════════════════════════════════════════════ */
+    .search-wrap {
+      width: min(100%, 560px);
+      animation: fadeUp .7s .24s var(--ease-out) both;
+      position: relative;
     }
 
-    .tracking-row input::placeholder {
-      color:var(--text-secondary);
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 999px;
+      padding: 6px 6px 6px 22px;
+      gap: 8px;
+      box-shadow: var(--shadow-lg), 0 0 0 0 rgba(220,38,38,0);
+      transition: border-color .25s, box-shadow .25s;
     }
 
-    button {
-      border:none;
-      cursor:pointer;
-      transition: .25s var(--transition);
-      font-family:inherit;
+    .search-box:focus-within {
+      border-color: var(--red);
+      box-shadow: var(--shadow-lg), 0 0 0 4px rgba(220,38,38,.1);
     }
 
-    .track-btn {
-      min-width:140px;
-      height:58px;
-      border-radius:14px;
-      background: var(--accent);
-      color:#000;
-      font-weight:800;
-      letter-spacing:.5px;
-      box-shadow: 0 0 0 rgba(245,166,35,0);
+    .search-icon {
+      color: var(--gray-400);
+      font-size: 1rem;
+      flex-shrink: 0;
     }
 
-    .track-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px var(--accent-glow);
+    .search-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-900);
+      caret-color: var(--red);
     }
 
-    .track-meta {
-      margin-top:1rem;
-      display:flex;
-      justify-content:space-between;
-      gap:1rem;
-      flex-wrap:wrap;
-      color:var(--text-secondary);
-      font-size:.85rem;
-      padding:0 .5rem;
+    .search-box input::placeholder { color: var(--gray-400); font-weight: 400; }
+
+    .search-btn {
+      height: 46px;
+      padding: 0 24px;
+      border-radius: 999px;
+      background: var(--gray-950);
+      color: var(--white);
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      flex-shrink: 0;
+      transition: background .2s, transform .15s var(--ease-spring);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .stats {
-      margin-top:3rem;
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:1rem;
-      width:min(100%, 1000px);
-      animation: fadeUp .6s .4s both;
+    .search-btn:hover {
+      background: var(--red);
+      transform: scale(1.02);
     }
 
-    .stat-card {
-      padding:1.2rem;
-      border-radius:18px;
-      transition:.3s;
+    .search-hint {
+      margin-top: 14px;
+      font-size: .8rem;
+      color: var(--gray-400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .stat-card:hover,
-    .info-card:hover,
-    .shipment-header:hover {
-      transform:translateY(-2px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    .search-hint kbd {
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-family: inherit;
+      font-size: .72rem;
+      color: var(--gray-600);
     }
 
-    .stat-icon {
-      font-size:1.6rem;
-      margin-bottom:.7rem;
+    /* ══════════════════════════════════════════════════
+       TRUST STRIP
+    ══════════════════════════════════════════════════ */
+    .trust-strip {
+      display: flex;
+      gap: 0;
+      margin-top: 72px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: var(--shadow-md);
+      animation: fadeUp .7s .36s var(--ease-out) both;
+      position: relative;
     }
 
+    .trust-item {
+      padding: 20px 32px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .trust-item:not(:last-child) { border-right: 1px solid var(--gray-200); }
+
+    .trust-num {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--gray-900);
+      line-height: 1;
+    }
+
+    .trust-label {
+      font-size: .78rem;
+      color: var(--gray-500);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* ══════════════════════════════════════════════════
+       TRACKING RESULTS
+    ══════════════════════════════════════════════════ */
     .results {
-      width:min(1200px, 92%);
-      margin:2rem auto 5rem;
-      display:none;
-      opacity:0;
-      transform:translateY(20px);
-      transition:.5s var(--transition);
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+      display: none;
     }
 
-    .results.show {
-      display:block;
-      opacity:1;
-      transform:translateY(0);
+    .results.show { display: block; animation: fadeUp .5s var(--ease-out) both; }
+
+    /* Result header card */
+    .result-header {
+      background: var(--gray-950);
+      color: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .shipment-header {
-      padding:2rem;
-      border-radius:24px;
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:1.5rem;
-      margin-bottom:2rem;
+    .result-header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(220,38,38,.25), transparent 70%);
+      pointer-events: none;
     }
 
-    .mono {
-      font-family:'JetBrains Mono', monospace;
+    .result-awb-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 6px;
     }
 
-    .status-badge {
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      padding:.6rem 1rem;
-      border-radius:999px;
-      font-size:.8rem;
-      font-weight:700;
-      width:max-content;
+    .result-awb {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #fff;
+      margin-bottom: 12px;
     }
 
-    .status-IN_TRANSIT,
-    .status-OUT_FOR_DELIVERY {
-      background: rgba(245,166,35,0.12);
-      color: var(--warning);
+    .result-route {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.8);
+      margin-bottom: 16px;
     }
 
-    .status-DELIVERED {
-      background: rgba(34,197,94,0.12);
-      color: var(--success);
+    .route-arrow {
+      color: var(--red);
+      font-size: 1.1rem;
     }
 
-    .status-BOOKED,
-    .status-PICKED_UP {
-      background: rgba(56,189,248,0.12);
-      color: var(--info);
+    .result-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .status-EXCEPTION {
-      background: rgba(239,68,68,0.12);
-      color: var(--danger);
+    .r-chip {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.65);
     }
 
-    .status-dot {
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:currentColor;
-      animation:pulse 1.6s infinite;
+    .result-right { text-align: right; }
+
+    .result-eta-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 6px;
     }
 
-    .route {
-      font-size:1.2rem;
-      font-weight:700;
-      margin:.8rem 0;
+    .result-eta {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
     }
 
-    .chip-row {
-      display:flex;
-      gap:.6rem;
-      flex-wrap:wrap;
-      margin-top:1rem;
+    /* Status badge */
+    .s-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-transform: uppercase;
     }
 
-    .chip {
-      padding:.5rem .9rem;
-      border-radius:999px;
-      background:rgba(255,255,255,0.05);
-      border:1px solid var(--border);
-      font-size:.8rem;
-      color:var(--text-secondary);
+    .s-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
     }
 
-    .action-row {
-      display:flex;
-      gap:1rem;
-      flex-wrap:wrap;
-      margin-top:1rem;
+    .badge-DELIVERED       { background: var(--green-bg);  color: var(--green); }
+    .badge-IN_TRANSIT      { background: var(--amber-bg);  color: var(--amber); }
+    .badge-OUT_FOR_DELIVERY{ background: var(--amber-bg);  color: var(--amber); }
+    .badge-BOOKED          { background: var(--blue-bg);   color: var(--blue);  }
+    .badge-PICKED_UP       { background: var(--blue-bg);   color: var(--blue);  }
+    .badge-EXCEPTION       { background: var(--red-light); color: var(--red);   }
+
+    /* Panel cards row */
+    .result-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
     }
 
-    .secondary-btn {
-      background: rgba(255,255,255,0.06);
-      color:var(--text-primary);
-      padding:.9rem 1rem;
-      border-radius:12px;
-      border:1px solid var(--border);
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
     }
 
-    .progress-section,
-    .timeline-section,
-    .info-grid {
-      margin-bottom:2rem;
+    .panel-title {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-bottom: 20px;
     }
 
-    .progress-wrapper {
-      padding:2rem;
-      border-radius:24px;
+    /* Progress stepper */
+    .stepper {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      position: relative;
     }
 
-    .progress {
-      display:flex;
-      justify-content:space-between;
-      gap:1rem;
-      position:relative;
-      flex-wrap:wrap;
+    .step-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
     }
 
-    .step {
-      flex:1;
-      min-width:100px;
-      position:relative;
-      text-align:center;
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 60%;
+      width: 100%;
+      height: 2px;
+      background: var(--gray-200);
     }
 
-    .step:not(:last-child)::after {
-      content:'';
-      position:absolute;
-      top:18px;
-      left:58%;
-      width:100%;
-      border-top:2px dashed rgba(255,255,255,0.15);
-      z-index:0;
-    }
-
-    .step.complete:not(:last-child)::after {
-      border-top-style:solid;
-      border-color:var(--accent);
-    }
+    .step-item.s-done:not(:last-child)::after { background: var(--red); }
 
     .step-node {
-      width:36px;
-      height:36px;
-      margin:0 auto 1rem;
-      border-radius:50%;
-      border:2px solid rgba(255,255,255,0.2);
-      display:grid;
-      place-items:center;
-      background:var(--bg-secondary);
-      position:relative;
-      z-index:1;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--gray-200);
+      background: var(--white);
+      display: grid;
+      place-items: center;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--gray-400);
+      position: relative;
+      z-index: 1;
+      transition: all .3s var(--ease);
     }
 
-    .step.complete .step-node {
-      background:var(--accent);
-      border-color:var(--accent);
-      color:#000;
+    .step-item.s-done .step-node {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff;
     }
 
-    .step.current .step-node {
-      border-color:var(--accent);
-      box-shadow:0 0 0 10px rgba(245,166,35,0.08);
-      animation:pulseRing 2s infinite;
+    .step-item.s-current .step-node {
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 0 0 5px rgba(220,38,38,.12);
+      animation: ring 2s infinite;
     }
 
-    @keyframes pulseRing {
-      0% { box-shadow:0 0 0 0 rgba(245,166,35,0.3); }
-      70% { box-shadow:0 0 0 15px rgba(245,166,35,0); }
-      100% { box-shadow:0 0 0 0 rgba(245,166,35,0); }
+    @keyframes ring {
+      0%   { box-shadow: 0 0 0 0 rgba(220,38,38,.3); }
+      70%  { box-shadow: 0 0 0 10px rgba(220,38,38,0); }
+      100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
     }
 
-    .timeline-card {
-      border-radius:24px;
-      padding:2rem;
-      max-height:500px;
-      overflow:auto;
+    .step-label {
+      font-size: .65rem;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 8px;
+      color: var(--gray-400);
+      line-height: 1.3;
     }
 
-    .timeline-item {
-      display:grid;
-      grid-template-columns:auto auto 1fr;
-      gap:1rem;
-      padding:1rem 0;
-      border-bottom:1px solid rgba(255,255,255,0.04);
-      opacity:0;
-      animation:fadeUp .5s forwards;
+    .step-item.s-current .step-label { color: var(--gray-900); }
+    .step-item.s-done .step-label    { color: var(--gray-600); }
+
+    /* People cards in panel */
+    .person-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
     }
 
-    .timeline-item.latest {
-      border-left:3px solid var(--accent);
-      padding-left:1rem;
+    .person-row:not(:last-child) { border-bottom: 1px solid var(--gray-100); }
+
+    .person-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--gray-100);
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      flex-shrink: 0;
     }
 
-    .timeline-marker {
-      width:12px;
-      height:12px;
-      border-radius:50%;
-      margin-top:.35rem;
-      background:var(--accent);
+    .person-name  { font-size: .9rem; font-weight: 600; color: var(--gray-900); }
+    .person-phone { font-size: .8rem; color: var(--gray-500); margin-top: 2px; }
+    .person-tag   {
+      margin-left: auto;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--gray-400);
     }
 
-    .timeline-location {
-      color:var(--text-secondary);
-      margin-top:.25rem;
-      font-size:.9rem;
+    /* Timeline */
+    .timeline-wrap {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+      max-height: 460px;
+      overflow-y: auto;
     }
 
-    .info-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:1rem;
+    .t-item {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--gray-100);
+      animation: fadeUp .4s var(--ease-out) both;
     }
 
-    .info-card {
-      padding:1.5rem;
-      border-radius:20px;
-      transition:.3s;
+    .t-item:last-child { border-bottom: none; }
+
+    .t-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 4px;
     }
 
-    .info-label {
-      color:var(--text-secondary);
-      margin-top:.6rem;
-      font-size:.9rem;
+    .t-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--gray-300);
+      flex-shrink: 0;
     }
 
-    .error-state {
-      text-align:center;
-      padding:3rem 2rem;
-      border-radius:24px;
+    .t-item.t-latest .t-dot { background: var(--red); box-shadow: 0 0 0 4px rgba(220,38,38,.15); }
+
+    .t-bar {
+      width: 1px;
+      flex: 1;
+      background: var(--gray-200);
+      margin-top: 6px;
+      min-height: 20px;
     }
 
-    .modal {
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.7);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:1rem;
-      z-index:100;
+    .t-event {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 3px;
     }
 
-    .modal.show {
-      display:flex;
-      animation:fadeIn .3s ease;
+    .t-item.t-latest .t-event { color: var(--red); }
+
+    .t-loc {
+      font-size: .8rem;
+      color: var(--gray-500);
+      margin-bottom: 3px;
     }
 
-    .modal-card {
-      width:min(100%, 420px);
-      border-radius:28px;
-      padding:2rem;
-      animation:scaleIn .3s var(--transition);
+    .t-time {
+      font-size: .75rem;
+      color: var(--gray-400);
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .form-group {
-      margin-bottom:1rem;
+    /* Error state */
+    .result-error {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      padding: 72px 36px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
     }
 
-    .form-group label {
-      display:block;
-      margin-bottom:.6rem;
-      color:var(--text-secondary);
-      font-size:.9rem;
+    .result-error .err-icon { font-size: 3rem; margin-bottom: 16px; }
+    .result-error h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    .result-error p  { color: var(--gray-500); font-size: .95rem; }
+
+    /* ══════════════════════════════════════════════════
+       ADMIN LOGIN MODAL
+    ══════════════════════════════════════════════════ */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
     }
 
-    input,
-    select,
-    textarea {
-      width:100%;
-      background:rgba(255,255,255,0.04);
-      border:1px solid var(--border);
-      color:var(--text-primary);
-      padding:1rem;
-      border-radius:14px;
-      font-family:inherit;
-      transition:.25s;
+    .overlay.show { display: flex; animation: fadeIn .25s var(--ease-out); }
+
+    .modal-box {
+      background: var(--white);
+      border-radius: var(--radius-2xl);
+      padding: 40px;
+      width: min(100%, 420px);
+      box-shadow: 0 32px 64px -12px rgba(0,0,0,.2);
+      animation: slideUp .3s var(--ease-spring) both;
+      position: relative;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      outline:none;
-      border-color:var(--accent);
-      box-shadow:0 0 0 3px rgba(245,166,35,0.1);
+    .modal-close-btn {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--gray-100);
+      color: var(--gray-500);
+      display: grid;
+      place-items: center;
+      font-size: .85rem;
+      transition: background .2s, color .2s;
     }
 
-    .error {
-      color:var(--danger);
-      font-size:.85rem;
-      margin-top:.4rem;
+    .modal-close-btn:hover { background: var(--gray-200); color: var(--gray-900); }
+
+    .modal-icon {
+      width: 52px; height: 52px;
+      background: var(--gray-950);
+      border-radius: var(--radius-lg);
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
     }
 
-    .shake {
-      animation:shake .35s;
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      color: var(--gray-950);
+      margin-bottom: 6px;
     }
 
-    @keyframes shake {
-      0%,100% { transform:translateX(0); }
-      25% { transform:translateX(-6px); }
-      50% { transform:translateX(6px); }
-      75% { transform:translateX(-4px); }
+    .modal-sub {
+      font-size: .875rem;
+      color: var(--gray-500);
+      margin-bottom: 28px;
     }
 
-    .admin-panel {
-      display:none;
-      min-height:100vh;
+    /* Form fields */
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 7px;
+      letter-spacing: .2px;
     }
 
-    .admin-layout {
-      display:grid;
-      grid-template-columns:260px 1fr;
+    .field input, .field select, .field textarea {
+      width: 100%;
+      height: 44px;
+      background: var(--gray-50);
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      font-size: .9rem;
+      color: var(--gray-900);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
     }
+
+    .field textarea {
+      height: auto;
+      padding: 12px 14px;
+      resize: vertical;
+    }
+
+    .field select { appearance: none; cursor: pointer; }
+
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--gray-900);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(0,0,0,.06);
+    }
+
+    .login-err {
+      background: var(--red-light);
+      border: 1px solid var(--red-mid);
+      color: var(--red);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: .85rem;
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      height: 46px;
+      background: var(--gray-950);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+      transition: background .2s, transform .15s var(--ease-spring);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover { background: var(--gray-800); transform: translateY(-1px); }
+
+    .btn-primary.danger { background: var(--red); }
+    .btn-primary.danger:hover { background: #b91c1c; }
+
+    /* ══════════════════════════════════════════════════
+       CONFIRM MODAL
+    ══════════════════════════════════════════════════ */
+    .confirm-box {
+      background: var(--white);
+      border-radius: var(--radius-2xl);
+      padding: 36px;
+      width: min(100%, 360px);
+      text-align: center;
+      box-shadow: 0 32px 64px -12px rgba(0,0,0,.2);
+      animation: slideUp .3s var(--ease-spring) both;
+    }
+
+    .confirm-icon-wrap {
+      width: 56px; height: 56px;
+      background: var(--red-light);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      margin: 0 auto 16px;
+    }
+
+    .confirm-box h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .confirm-box p  { color: var(--gray-500); font-size: .875rem; margin-bottom: 24px; }
+
+    .confirm-btns { display: flex; gap: 10px; }
+
+    .btn-ghost {
+      flex: 1; height: 42px;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 600;
+      transition: background .2s;
+    }
+
+    .btn-ghost:hover { background: var(--gray-200); }
+
+    /* ══════════════════════════════════════════════════
+       ADMIN PANEL
+    ══════════════════════════════════════════════════ */
+    .admin-shell { display: none; min-height: 100svh; background: var(--gray-50); }
+
+    .admin-layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100svh; }
 
     .sidebar {
-      min-height:100vh;
-      padding:2rem 1rem;
-      border-right:1px solid var(--border);
-      position:sticky;
-      top:0;
+      background: var(--white);
+      border-right: 1px solid var(--gray-200);
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
 
-    .sidebar-item {
-      width:100%;
-      background:transparent;
-      color:var(--text-secondary);
-      text-align:left;
-      padding:1rem;
-      border-radius:14px;
-      margin-bottom:.5rem;
-      border:1px solid transparent;
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px 24px;
+      border-bottom: 1px solid var(--gray-100);
+      margin-bottom: 16px;
     }
 
-    .sidebar-item.active,
-    .sidebar-item:hover {
-      background:rgba(245,166,35,0.08);
-      border-color:rgba(245,166,35,0.15);
-      color:var(--text-primary);
+    .sidebar-brand-name {
+      font-size: .95rem;
+      font-weight: 800;
+      letter-spacing: -.3px;
+      color: var(--gray-900);
     }
 
-    .admin-content {
-      padding:2rem;
+    .sidebar-section {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      padding: 0 12px;
+      margin: 8px 0 4px;
     }
 
-    .admin-topbar {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:2rem;
-      gap:1rem;
-      flex-wrap:wrap;
+    .s-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: transparent;
+      transition: background .15s, color .15s;
+      text-align: left;
+      margin-bottom: 2px;
+      border: none;
+      cursor: pointer;
     }
 
+    .s-item:hover { background: var(--gray-100); color: var(--gray-900); }
+
+    .s-item.active {
+      background: var(--gray-950);
+      color: var(--white);
+    }
+
+    .s-item.s-danger:hover { background: var(--red-light); color: var(--red); }
+
+    .sidebar-spacer { flex: 1; }
+
+    .sidebar-user {
+      border-top: 1px solid var(--gray-100);
+      padding-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-avatar {
+      width: 34px; height: 34px;
+      background: var(--gray-950);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: .8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .sidebar-user-name  { font-size: .875rem; font-weight: 600; }
+    .sidebar-user-role  { font-size: .75rem; color: var(--gray-400); }
+
+    /* Admin main content */
+    .a-main { padding: 32px; overflow-y: auto; }
+
+    .a-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+    }
+
+    .a-page-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      color: var(--gray-950);
+    }
+
+    .a-page-sub {
+      font-size: .85rem;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .btn-sm {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: var(--radius-md);
+      font-size: .8rem;
+      font-weight: 600;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: 1px solid var(--gray-200);
+      transition: background .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-sm:hover { background: var(--gray-200); }
+
+    .btn-sm.primary { background: var(--gray-950); color: #fff; border-color: transparent; }
+    .btn-sm.primary:hover { background: var(--gray-700); }
+
+    /* KPI cards */
     .kpi-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:1rem;
-      margin-bottom:2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
-    .kpi-card,
-    .table-card,
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .2s, transform .2s;
+    }
+
+    .kpi-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+
+    .kpi-icon { font-size: 1.4rem; margin-bottom: 12px; }
+    .kpi-value { font-size: 2rem; font-weight: 800; letter-spacing: -1px; color: var(--gray-950); line-height: 1; margin-bottom: 4px; }
+    .kpi-label { font-size: .8rem; color: var(--gray-500); font-weight: 500; }
+    .kpi-sub   { font-size: .75rem; color: var(--gray-400); margin-top: 2px; }
+
+    /* Table card */
+    .t-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .t-card-head {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .t-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .t-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .t-filters input, .t-filters select {
+      height: 36px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 0 12px;
+      font-size: .82rem;
+      color: var(--gray-800);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .t-filters input:focus, .t-filters select:focus { border-color: var(--gray-900); }
+
+    .t-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; min-width: 660px; }
+
+    thead th {
+      padding: 12px 16px;
+      background: var(--gray-50);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      border-bottom: 1px solid var(--gray-200);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      font-size: .875rem;
+      color: var(--gray-700);
+      border-bottom: 1px solid var(--gray-100);
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: var(--gray-50); }
+
+    .tbl-act { display: flex; gap: 6px; }
+
+    .act-edit {
+      height: 30px; padding: 0 12px;
+      border-radius: var(--radius-sm);
+      background: var(--blue-bg);
+      color: var(--blue);
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid rgba(37,99,235,.15);
+      transition: background .15s;
+    }
+
+    .act-edit:hover { background: #bfdbfe; }
+
+    .act-del {
+      height: 30px; padding: 0 12px;
+      border-radius: var(--radius-sm);
+      background: var(--red-light);
+      color: var(--red);
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1px solid rgba(220,38,38,.15);
+      transition: background .15s;
+    }
+
+    .act-del:hover { background: #fecaca; }
+
+    /* Empty state */
+    .empty {
+      padding: 60px 24px;
+      text-align: center;
+      color: var(--gray-400);
+    }
+
+    .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .empty p    { font-size: .9rem; }
+
+    /* Form card */
     .form-card {
-      border-radius:24px;
-      padding:1.5rem;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
     }
 
-    table {
-      width:100%;
-      border-collapse:collapse;
-      min-width:720px;
+    .form-card-head {
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--gray-100);
     }
 
-    th,
-    td {
-      padding:1rem;
-      border-bottom:1px solid rgba(255,255,255,0.05);
-      text-align:left;
+    .form-card-body { padding: 28px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
-    tbody tr {
-      transition:.25s;
+    .section-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin: 24px 0 16px;
     }
 
-    tbody tr:hover {
-      background:rgba(245,166,35,0.03);
-      border-left:3px solid var(--accent);
+    .evt-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr 36px;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 10px;
     }
 
-    .table-wrap {
-      overflow:auto;
+    .evt-row .field { margin-bottom: 0; }
+
+    .rm-evt-btn {
+      width: 36px; height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--red-light);
+      color: var(--red);
+      font-size: 1rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(220,38,38,.15);
+      transition: background .15s;
+      flex-shrink: 0;
     }
 
-    .hidden { display:none; }
+    .rm-evt-btn:hover { background: #fecaca; }
 
-    .event-row {
-      display:grid;
-      grid-template-columns:1fr 1fr 2fr;
-      gap:1rem;
-      margin-bottom:1rem;
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
     }
 
+    .btn-outline {
+      height: 44px; padding: 0 20px;
+      border-radius: var(--radius-md);
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      color: var(--gray-700);
+      font-size: .875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color .2s, background .2s;
+    }
+
+    .btn-outline:hover { border-color: var(--gray-400); background: var(--gray-50); }
+
+    .btn-save {
+      height: 44px; padding: 0 28px;
+      border-radius: var(--radius-md);
+      background: var(--gray-950);
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background .2s, transform .15s var(--ease-spring);
+    }
+
+    .btn-save:hover { background: var(--gray-700); transform: translateY(-1px); }
+
+    /* ══════════════════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--gray-950);
+      color: var(--white);
+      padding: 13px 18px;
+      border-radius: var(--radius-lg);
+      font-size: .875rem;
+      font-weight: 600;
+      z-index: 500;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform .4s var(--ease-spring), opacity .4s var(--ease-out);
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      max-width: 320px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.t-success { background: var(--green); }
+    .toast.t-error   { background: var(--red); }
+
+    /* ══════════════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════════════ */
     .footer {
-      padding:2rem 5%;
-      border-top:1px solid var(--border);
-      color:var(--text-secondary);
-      display:flex;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      gap:1rem;
+      border-top: 1px solid var(--gray-200);
+      padding: 32px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--white);
     }
 
-    .loading-spinner {
-      width:18px;
-      height:18px;
-      border:2px solid rgba(0,0,0,0.2);
-      border-top-color:#000;
-      border-radius:50%;
-      animation:spin .7s linear infinite;
-      display:inline-block;
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    @keyframes spin {
-      to { transform:rotate(360deg); }
+    .footer-copy { font-size: .8rem; color: var(--gray-400); }
+
+    .footer-right { font-size: .8rem; color: var(--gray-400); }
+    .footer-right a { color: var(--gray-500); }
+    .footer-right a:hover { color: var(--gray-900); }
+
+    /* Spinner */
+    .spin {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: rotate .65s linear infinite;
+      display: inline-block;
     }
 
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(20px); }
-      to { opacity:1; transform:translateY(0); }
+    /* ══════════════════════════════════════════════════
+       ANIMATIONS
+    ══════════════════════════════════════════════════ */
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(20px);  } to { opacity:1; transform:translateY(0);  } }
+    @keyframes fadeIn   { from { opacity:0; }                              to { opacity:1; }                             }
+    @keyframes slideUp  { from { opacity:0; transform:translateY(24px);  } to { opacity:1; transform:translateY(0);  } }
+    @keyframes rotate   { to   { transform: rotate(360deg); } }
+    @keyframes shake {
+      0%,100% { transform:translateX(0);  }
+      25%      { transform:translateX(-7px); }
+      50%      { transform:translateX(7px);  }
+      75%      { transform:translateX(-4px); }
     }
 
-    @keyframes fadeIn {
-      from { opacity:0; }
-      to { opacity:1; }
-    }
-
-    @keyframes scaleIn {
-      from { opacity:0; transform:scale(.95); }
-      to { opacity:1; transform:scale(1); }
+    /* ══════════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .result-panels { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 900px) {
-      .admin-layout {
-        grid-template-columns:1fr;
-      }
+      .admin-layout { grid-template-columns: 1fr; }
 
       .sidebar {
-        min-height:auto;
-        position:fixed;
-        bottom:0;
-        left:0;
-        right:0;
-        z-index:50;
-        display:flex;
-        gap:.5rem;
-        padding:1rem;
-        background:rgba(10,10,15,0.95);
+        position: fixed;
+        bottom: 0; left: 0; right: 0; top: auto;
+        height: auto;
+        flex-direction: row;
+        padding: 10px 12px;
+        border-top: 1px solid var(--gray-200);
+        border-right: none;
+        z-index: 80;
+        overflow-x: auto;
+        gap: 4px;
+        backdrop-filter: blur(20px);
+        background: rgba(255,255,255,.96);
       }
 
-      .sidebar-item {
-        margin:0;
-        text-align:center;
-        padding:.9rem .5rem;
-        font-size:.8rem;
+      .sidebar-brand, .sidebar-section, .sidebar-spacer, .sidebar-user { display: none; }
+
+      .s-item {
+        flex-direction: column;
+        gap: 3px;
+        padding: 8px 12px;
+        font-size: .68rem;
+        min-width: 64px;
+        text-align: center;
+        border-radius: var(--radius-md);
       }
 
-      .admin-content {
-        padding-bottom:7rem;
-      }
+      .a-main { padding: 20px 16px 100px; }
     }
 
     @media (max-width: 640px) {
-      .tracking-row {
-        flex-direction:column;
-      }
-
-      .track-btn {
-        width:100%;
-      }
-
-      .stats {
-        grid-template-columns:1fr;
-      }
-
-      .progress {
-        flex-direction:column;
-        align-items:flex-start;
-      }
-
-      .step {
-        width:100%;
-        text-align:left;
-        display:flex;
-        align-items:flex-start;
-        gap:1rem;
-      }
-
-      .step:not(:last-child)::after {
-        left:17px;
-        top:40px;
-        width:0;
-        height:60px;
-        border-top:none;
-        border-left:2px dashed rgba(255,255,255,0.15);
-      }
-
-      .step.complete:not(:last-child)::after {
-        border-left-style:solid;
-        border-color:var(--accent);
-      }
-
-      .event-row {
-        grid-template-columns:1fr;
-      }
-
-      nav {
-        gap:.8rem;
-      }
-
-      nav a { font-size:.8rem; }
+      .search-box { border-radius: var(--radius-xl); padding: 8px 8px 8px 18px; }
+      .search-btn { height: 42px; padding: 0 18px; font-size: .82rem; }
+      .trust-strip { display: none; }
+      .result-header { grid-template-columns: 1fr; }
+      .result-right { text-align: left; }
+      .stepper { gap: 0; overflow-x: auto; padding-bottom: 8px; }
+      .step-item { min-width: 70px; }
+      .nav-links a:not(.nav-btn) { display: none; }
+      .evt-row { grid-template-columns: 1fr 1fr; }
+      .evt-row > *:nth-child(3) { grid-column: 1 / -1; }
     }
 
     @media print {
-      header,
-      .hero,
-      .footer,
-      .admin-panel,
-      .modal {
-        display:none !important;
-      }
-
-      body {
-        background:#fff;
-        color:#000;
-      }
-
-      .results {
-        display:block !important;
-        opacity:1 !important;
-      }
+      .nav, .hero, .footer, .admin-shell, .overlay, .toast { display:none!important; }
+      .results { display:block!important; }
     }
   </style>
 </head>
 <body>
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
 
-  <header id="header">
-    <div class="header-inner">
-      <div class="logo">
-        <div class="logo-top">
-          <div class="logo-icon">➜</div>
-          SWIFTPATH
-        </div>
-        <div class="tagline">Precision. Speed. Delivery.</div>
+  <!-- ══════════════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════════════ -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" id="navLogoLink">
+        <div class="nav-logo-mark">TW</div>
+        TWO WAY
+      </a>
+
+      <div class="nav-links">
+        <a href="#" id="navTrackLink">Track</a>
+        <a href="mailto:support@twowaycargo.in">Support</a>
+        <button class="nav-btn" id="adminTrigger">Admin Login</button>
       </div>
-
-      <nav>
-        <a href="#">Track</a>
-        <a href="#">Support</a>
-        <a href="#" class="admin-link" id="adminTrigger">Admin Login</a>
-      </nav>
     </div>
-  </header>
+  </nav>
 
-  <main id="publicPage">
-    <section class="hero">
-      <div class="pill">
-        <div class="pulse-dot"></div>
-        ▸ Real-Time Tracking
+  <!-- ══════════════════════════════════════════════════
+       PUBLIC PAGE
+  ══════════════════════════════════════════════════ -->
+  <div id="publicPage">
+
+    <!-- HERO -->
+    <section class="hero" id="heroSection">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+
+      <div class="hero-eyebrow">
+        <div class="live-dot"></div>
+        Live shipment tracking
       </div>
 
-      <h1>Where is your <span class="accent">shipment</span>?</h1>
-      <p>Enter your AWB / Tracking Number to get live status updates</p>
+      <h1 class="hero-title">
+        Know exactly where<br>your <span class="accent">shipment</span> is.
+      </h1>
 
-      <div class="tracking-card glass">
-        <div class="tracking-row">
-          <input type="text" id="trackingInput" placeholder="Enter AWB or Tracking Number">
-          <button class="track-btn" id="trackBtn">TRACK</button>
+      <p class="hero-sub">
+        Enter your AWB or tracking number for instant, real-time updates on your cargo, anywhere in India.
+      </p>
+
+      <div class="search-wrap">
+        <div class="search-box" id="searchBox">
+          <span class="search-icon">⌕</span>
+          <input
+            type="text"
+            id="trackingInput"
+            placeholder="AWB or tracking number…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button class="search-btn" id="trackBtn">
+            Track
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
         </div>
 
-        <div class="track-meta">
-          <span>Try: TWC100001, TWC100002, TWC100003</span>
-          <span>Press Enter ↵ to track</span>
+        <div class="search-hint">
+          Try TWC100001, TWC100002 &nbsp;·&nbsp; Press <kbd>↵ Enter</kbd> to track
         </div>
       </div>
 
-      <div class="stats">
-        <div class="stat-card glass">
-          <div class="stat-icon">📦</div>
-          <h3>2M+ Shipments Tracked</h3>
-          <p>Trusted logistics at scale</p>
+      <div class="trust-strip">
+        <div class="trust-item">
+          <div class="trust-num">2M+</div>
+          <div class="trust-label">Shipments tracked</div>
         </div>
-
-        <div class="stat-card glass">
-          <div class="stat-icon">⚡</div>
-          <h3>99.8% On-Time Rate</h3>
-          <p>Precision delivery network</p>
+        <div class="trust-item">
+          <div class="trust-num">99.8%</div>
+          <div class="trust-label">On-time delivery</div>
         </div>
-
-        <div class="stat-card glass">
-          <div class="stat-icon">🌍</div>
-          <h3>180+ Cities Covered</h3>
-          <p>Nationwide distribution coverage</p>
+        <div class="trust-item">
+          <div class="trust-num">180+</div>
+          <div class="trust-label">Cities covered</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">24/7</div>
+          <div class="trust-label">Customer support</div>
         </div>
       </div>
     </section>
 
+    <!-- RESULTS -->
     <section class="results" id="results"></section>
-  </main>
 
-  <div class="modal" id="adminModal">
-    <div class="modal-card glass" id="loginCard">
-      <h2 style="font-family: Syne, sans-serif; margin-bottom: 1.5rem;">🔒 Admin Access</h2>
+    <!-- FOOTER -->
+    <footer class="footer" id="footer">
+      <div class="footer-left">
+        <div class="nav-logo-mark">TW</div>
+        <span class="footer-copy">© 2026 TWO WAY Logistics</span>
+      </div>
+      <div class="footer-right">
+        <a href="mailto:support@twowaycargo.in">support@twowaycargo.in</a>
+      </div>
+    </footer>
 
-      <div class="form-group">
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       ADMIN LOGIN MODAL
+  ══════════════════════════════════════════════════ -->
+  <div class="overlay" id="loginOverlay">
+    <div class="modal-box">
+      <button class="modal-close-btn" id="modalCloseBtn">✕</button>
+      <div class="modal-icon">🔐</div>
+      <div class="modal-title">Admin Access</div>
+      <div class="modal-sub">Sign in to manage shipments and view reports.</div>
+
+      <div class="field">
         <label>Username</label>
-        <input type="text" id="adminUsername" placeholder="Enter username">
+        <input type="text" id="adminUser" placeholder="admin" autocomplete="username">
       </div>
 
-      <div class="form-group">
+      <div class="field">
         <label>Password</label>
-        <input type="password" id="adminPassword" placeholder="Enter password">
+        <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password">
       </div>
 
-      <div class="error hidden" id="loginError">Invalid credentials. Try admin / admin123</div>
+      <div class="login-err hidden" id="loginErr">Incorrect credentials. Hint: admin / admin123</div>
 
-      <button class="track-btn" style="width:100%; margin-top:1rem;" id="loginBtn">Login</button>
+      <button class="btn-primary" id="loginBtn">Sign in</button>
     </div>
   </div>
 
-  <section class="admin-panel" id="adminPanel">
+  <!-- ══════════════════════════════════════════════════
+       CONFIRM DELETE MODAL
+  ══════════════════════════════════════════════════ -->
+  <div class="overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <div class="confirm-icon-wrap">🗑</div>
+      <h3>Delete shipment?</h3>
+      <p>This is permanent and cannot be undone.</p>
+      <div class="confirm-btns">
+        <button class="btn-ghost" id="confirmCancel">Cancel</button>
+        <button class="btn-primary danger" id="confirmDel" style="flex:1;height:42px;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       ADMIN PANEL
+  ══════════════════════════════════════════════════ -->
+  <div class="admin-shell" id="adminShell">
     <div class="admin-layout">
-      <aside class="sidebar glass">
-        <button class="sidebar-item active" data-view="dashboardView">Dashboard</button>
-        <button class="sidebar-item" data-view="shipmentsView">All Shipments</button>
-        <button class="sidebar-item" data-view="addShipmentView">Add Shipment</button>
-        <button class="sidebar-item" id="logoutBtn">Logout</button>
-      </aside>
 
-      <div class="admin-content">
-        <div class="admin-topbar">
-          <div>
-            <h1 style="font-size:2rem;">Admin Panel</h1>
-            <p style="color: var(--text-secondary);">Logged in as admin</p>
-          </div>
-
-          <button class="secondary-btn" id="adminLogoutTop">Logout</button>
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="nav-logo-mark">TW</div>
+          <div class="sidebar-brand-name">TWO WAY Admin</div>
         </div>
 
-        <div id="dashboardView">
+        <div class="sidebar-section">Menu</div>
+        <button class="s-item active" data-view="dashView">
+          <span>📊</span> Dashboard
+        </button>
+        <button class="s-item" data-view="allView">
+          <span>📦</span> Shipments
+        </button>
+        <button class="s-item" data-view="addView">
+          <span>➕</span> Add Shipment
+        </button>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="sidebar-user">
+          <div class="sidebar-avatar">A</div>
+          <div>
+            <div class="sidebar-user-name">Admin</div>
+            <div class="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
+
+        <button class="s-item s-danger" id="logoutBtn" style="margin-top:12px;">
+          <span>↩</span> Logout
+        </button>
+      </aside>
+
+      <!-- Main content -->
+      <main class="a-main">
+
+        <!-- ── DASHBOARD VIEW ── -->
+        <div id="dashView">
+          <div class="a-topbar">
+            <div>
+              <div class="a-page-title">Dashboard</div>
+              <div class="a-page-sub">Overview of all shipments</div>
+            </div>
+            <button class="btn-sm primary" id="refreshBtn">↻ Refresh</button>
+          </div>
+
           <div class="kpi-grid" id="kpiGrid"></div>
 
-          <div class="table-card glass">
-            <h3 style="margin-bottom:1rem;">Recent Shipments</h3>
-            <div class="table-wrap">
+          <div class="t-card">
+            <div class="t-card-head">
+              <div class="t-card-title">Recent Shipments</div>
+              <button class="btn-sm" data-view="allView">View all →</button>
+            </div>
+            <div class="t-wrap">
               <table>
                 <thead>
                   <tr>
@@ -1010,32 +1629,42 @@
                     <th>Status</th>
                     <th>Origin</th>
                     <th>Destination</th>
-                    <th>Date</th>
+                    <th>ETA</th>
                   </tr>
                 </thead>
-                <tbody id="recentTable"></tbody>
+                <tbody id="recentTbody"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <div id="shipmentsView" class="hidden">
-          <div class="table-card glass">
-            <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
-              <input type="text" id="searchShipment" placeholder="Search shipment" style="max-width:320px;">
-
-              <select id="statusFilter" style="max-width:220px;">
-                <option value="ALL">All Status</option>
-                <option value="BOOKED">Booked</option>
-                <option value="PICKED_UP">Picked Up</option>
-                <option value="IN_TRANSIT">In Transit</option>
-                <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
-                <option value="DELIVERED">Delivered</option>
-                <option value="EXCEPTION">Exception</option>
-              </select>
+        <!-- ── ALL SHIPMENTS VIEW ── -->
+        <div id="allView" class="hidden">
+          <div class="a-topbar">
+            <div>
+              <div class="a-page-title">Shipments</div>
+              <div class="a-page-sub">All shipments in the system</div>
             </div>
+            <button class="btn-sm primary" data-view="addView">+ Add new</button>
+          </div>
 
-            <div class="table-wrap">
+          <div class="t-card">
+            <div class="t-card-head">
+              <div class="t-card-title">All Shipments</div>
+              <div class="t-filters">
+                <input type="text" id="searchInput" placeholder="Search AWB, city…">
+                <select id="statusFilter">
+                  <option value="ALL">All Status</option>
+                  <option value="BOOKED">Booked</option>
+                  <option value="PICKED_UP">Picked Up</option>
+                  <option value="IN_TRANSIT">In Transit</option>
+                  <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                  <option value="DELIVERED">Delivered</option>
+                  <option value="EXCEPTION">Exception</option>
+                </select>
+              </div>
+            </div>
+            <div class="t-wrap">
               <table>
                 <thead>
                   <tr>
@@ -1043,616 +1672,680 @@
                     <th>Status</th>
                     <th>Origin</th>
                     <th>Destination</th>
-                    <th>Date</th>
+                    <th>ETA</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="shipmentTable"></tbody>
+                <tbody id="allTbody"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <div id="addShipmentView" class="hidden">
-          <div class="form-card glass">
-            <h3 style="margin-bottom:1.5rem;">Shipment Form</h3>
+        <!-- ── ADD / EDIT VIEW ── -->
+        <div id="addView" class="hidden">
+          <div class="a-topbar">
+            <div>
+              <div class="a-page-title" id="formTitle">New Shipment</div>
+              <div class="a-page-sub" id="formSub">Fill in the details below</div>
+            </div>
+          </div>
 
-            <form id="shipmentForm">
-              <input type="hidden" id="editIndex">
+          <div class="form-card">
+            <div class="form-card-head">
+              <div class="t-card-title">Shipment Details</div>
+            </div>
+            <div class="form-card-body">
+              <form id="shipForm" novalidate>
+                <input type="hidden" id="editDocId">
 
-              <div class="kpi-grid">
-                <div class="form-group">
-                  <label>AWB Number</label>
-                  <input type="text" id="awb">
+                <div class="form-grid">
+                  <div class="field">
+                    <label>AWB Number *</label>
+                    <input type="text" id="fAwb" placeholder="TWC100004" required>
+                  </div>
+                  <div class="field">
+                    <label>Current Status</label>
+                    <select id="fStatus">
+                      <option value="BOOKED">Booked</option>
+                      <option value="PICKED_UP">Picked Up</option>
+                      <option value="IN_TRANSIT">In Transit</option>
+                      <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                      <option value="DELIVERED">Delivered</option>
+                      <option value="EXCEPTION">Exception</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Service Type</label>
+                    <select id="fService">
+                      <option>Express</option>
+                      <option>Standard</option>
+                      <option>Economy</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Expected Delivery</label>
+                    <input type="date" id="fETA">
+                  </div>
+                  <div class="field">
+                    <label>Weight (kg)</label>
+                    <input type="text" id="fWeight" placeholder="2.5">
+                  </div>
+                  <div class="field">
+                    <label>Dimensions (L×W×H cm)</label>
+                    <input type="text" id="fDim" placeholder="30×20×15">
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label>Sender Name</label>
-                  <input type="text" id="senderName">
+                <div class="section-label">Sender</div>
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Sender Name</label>
+                    <input type="text" id="fSName" placeholder="Full name">
+                  </div>
+                  <div class="field">
+                    <label>Sender Phone</label>
+                    <input type="text" id="fSPhone" placeholder="+91 XXXXX XXXXX">
+                  </div>
+                  <div class="field">
+                    <label>Origin City *</label>
+                    <input type="text" id="fOrigin" placeholder="Mumbai" required>
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label>Sender Phone</label>
-                  <input type="text" id="senderPhone">
+                <div class="section-label">Receiver</div>
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Receiver Name</label>
+                    <input type="text" id="fRName" placeholder="Full name">
+                  </div>
+                  <div class="field">
+                    <label>Receiver Phone</label>
+                    <input type="text" id="fRPhone" placeholder="+91 XXXXX XXXXX">
+                  </div>
+                  <div class="field">
+                    <label>Destination City *</label>
+                    <input type="text" id="fDest" placeholder="Delhi" required>
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label>Receiver Name</label>
-                  <input type="text" id="receiverName">
+                <div class="section-label">Timeline Events</div>
+                <div id="evtContainer"></div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn-outline" id="addEvtBtn">+ Add Event</button>
+                  <button type="button" class="btn-outline hidden" id="cancelEditBtn">✕ Cancel Edit</button>
+                  <div style="flex:1"></div>
+                  <button type="submit" class="btn-save" id="saveBtn">
+                    Save Shipment
+                  </button>
                 </div>
-
-                <div class="form-group">
-                  <label>Receiver Phone</label>
-                  <input type="text" id="receiverPhone">
-                </div>
-
-                <div class="form-group">
-                  <label>Origin City</label>
-                  <input type="text" id="originCity">
-                </div>
-
-                <div class="form-group">
-                  <label>Destination City</label>
-                  <input type="text" id="destinationCity">
-                </div>
-
-                <div class="form-group">
-                  <label>Service Type</label>
-                  <select id="serviceType">
-                    <option>Express</option>
-                    <option>Standard</option>
-                    <option>Economy</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label>Weight (kg)</label>
-                  <input type="text" id="weight">
-                </div>
-
-                <div class="form-group">
-                  <label>Dimensions</label>
-                  <input type="text" id="dimensions">
-                </div>
-
-                <div class="form-group">
-                  <label>Expected Delivery Date</label>
-                  <input type="date" id="deliveryDate">
-                </div>
-
-                <div class="form-group">
-                  <label>Current Status</label>
-                  <select id="currentStatus">
-                    <option value="BOOKED">Booked</option>
-                    <option value="PICKED_UP">Picked Up</option>
-                    <option value="IN_TRANSIT">In Transit</option>
-                    <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
-                    <option value="DELIVERED">Delivered</option>
-                    <option value="EXCEPTION">Exception</option>
-                  </select>
-                </div>
-              </div>
-
-              <h3 style="margin:1rem 0;">Timeline Events</h3>
-              <div id="eventsContainer"></div>
-
-              <button type="button" class="secondary-btn" id="addEventBtn">+ Add Event</button>
-              <button type="submit" class="track-btn" style="margin-top:1rem; width:100%;">Save Shipment</button>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+
+      </main>
     </div>
-  </section>
+  </div>
 
-  <footer class="footer">
-    <div>© 2026 SWIFTPATH Logistics. All rights reserved.</div>
-    <div>support@swiftpathlogistics.com</div>
-  </footer>
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
-  <script>
-    window.shipmentDB = [
-      {
-        awb: 'TWC100001',
-        status: 'IN_TRANSIT',
-        sender: { name:'Rahul Mehta', phone:'9876543210', city:'Mumbai' },
-        receiver: { name:'Ayesha Khan', phone:'9988776655', city:'Delhi' },
-        service:'Express',
-        weight:'2.5 kg',
-        dimensions:'30x20x15 cm',
-        bookedDate:'2026-05-21',
-        expectedDelivery:'2026-05-29',
-        timeline:[
-          { datetime:'2026-05-28 10:00', location:'Delhi Hub', event:'Shipment arrived at destination hub' },
-          { datetime:'2026-05-27 21:00', location:'Mumbai Airport', event:'Departed origin facility' },
-          { datetime:'2026-05-27 14:30', location:'Mumbai Hub', event:'Shipment booked and picked up' }
-        ]
-      },
-      {
-        awb: 'TWC100002',
-        status: 'DELIVERED',
-        sender: { name:'Priya Shah', phone:'9000000011', city:'Ahmedabad' },
-        receiver: { name:'Omar Ali', phone:'9223344556', city:'Pune' },
-        service:'Standard',
-        weight:'1.2 kg',
-        dimensions:'18x12x8 cm',
-        bookedDate:'2026-05-20',
-        expectedDelivery:'2026-05-24',
-        timeline:[
-          { datetime:'2026-05-24 13:00', location:'Pune', event:'Shipment delivered successfully' },
-          { datetime:'2026-05-24 09:00', location:'Pune Local', event:'Out for delivery' },
-          { datetime:'2026-05-23 18:00', location:'Pune Hub', event:'Arrived at destination facility' }
-        ]
-      },
-      {
-        awb: 'TWC100003',
-        status: 'OUT_FOR_DELIVERY',
-        sender: { name:'Arjun Patel', phone:'9111222233', city:'Surat' },
-        receiver: { name:'Sara Khan', phone:'9887766554', city:'Bhopal' },
-        service:'Express',
-        weight:'5 kg',
-        dimensions:'40x35x25 cm',
-        bookedDate:'2026-05-22',
-        expectedDelivery:'2026-05-28',
-        timeline:[
-          { datetime:'2026-05-28 08:30', location:'Bhopal Local', event:'Out for delivery' },
-          { datetime:'2026-05-27 23:30', location:'Bhopal Hub', event:'Arrived at destination hub' }
-        ]
-      },
-      {
-        awb: 'TWC100004',
-        status: 'BOOKED',
-        sender: { name:'Nikhil Jain', phone:'9876501234', city:'Indore' },
-        receiver: { name:'Fatima Noor', phone:'9765432109', city:'Jaipur' },
-        service:'Economy',
-        weight:'8 kg',
-        dimensions:'60x40x30 cm',
-        bookedDate:'2026-05-28',
-        expectedDelivery:'2026-06-01',
-        timeline:[
-          { datetime:'2026-05-28 11:00', location:'Indore', event:'Shipment booked successfully' }
-        ]
-      },
-      {
-        awb: 'TWC100005',
-        status: 'EXCEPTION',
-        sender: { name:'Zoya Merchant', phone:'9001112233', city:'Hyderabad' },
-        receiver: { name:'Imran Sheikh', phone:'9332211455', city:'Lucknow' },
-        service:'Standard',
-        weight:'3.8 kg',
-        dimensions:'28x18x18 cm',
-        bookedDate:'2026-05-25',
-        expectedDelivery:'2026-05-30',
-        timeline:[
-          { datetime:'2026-05-27 16:00', location:'Nagpur Hub', event:'Weather delay in transit' },
-          { datetime:'2026-05-26 19:00', location:'Hyderabad Facility', event:'Shipment departed sorting facility' }
-        ]
-      }
-    ];
+  <!-- ══════════════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════════════ -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, getDocs,
+      updateDoc, deleteDoc, doc, query, where
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const statusSteps = ['BOOKED','PICKED_UP','IN_TRANSIT','OUT_FOR_DELIVERY','DELIVERED'];
-    const stepLabels = {
-      BOOKED:'Booked',
-      PICKED_UP:'Picked Up',
-      IN_TRANSIT:'In Transit',
-      OUT_FOR_DELIVERY:'Out for Delivery',
-      DELIVERED:'Delivered'
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOW_Y-AZrirAoW3-RIafPmNJI1dlNPmLA",
+      authDomain: "tracking-twoway.firebaseapp.com",
+      projectId: "tracking-twoway",
+      storageBucket: "tracking-twoway.firebasestorage.app",
+      messagingSenderId: "445415365945",
+      appId: "1:445415365945:web:8eecd941fa27bfaaf39ce8"
     };
 
-    const trackingInput = document.getElementById('trackingInput');
-    const trackBtn = document.getElementById('trackBtn');
-    const results = document.getElementById('results');
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
 
-    function formatStatus(status) {
-      return status.replaceAll('_',' ');
+    /* ─── HELPERS ─── */
+    const $ = id => document.getElementById(id);
+    const ADMIN_USER = 'admin', ADMIN_PASS = 'admin123';
+
+    const STATUS_STEPS   = ['BOOKED','PICKED_UP','IN_TRANSIT','OUT_FOR_DELIVERY','DELIVERED'];
+    const STATUS_LABELS  = { BOOKED:'Booked', PICKED_UP:'Picked Up', IN_TRANSIT:'In Transit', OUT_FOR_DELIVERY:'Out for Delivery', DELIVERED:'Delivered', EXCEPTION:'Exception' };
+    const STATUS_CLASSES = { DELIVERED:'badge-DELIVERED', IN_TRANSIT:'badge-IN_TRANSIT', OUT_FOR_DELIVERY:'badge-OUT_FOR_DELIVERY', BOOKED:'badge-BOOKED', PICKED_UP:'badge-PICKED_UP', EXCEPTION:'badge-EXCEPTION' };
+
+    function badge(s) {
+      const cls = STATUS_CLASSES[s] || '';
+      return `<span class="s-badge ${cls}"><span class="dot"></span>${STATUS_LABELS[s] || s}</span>`;
     }
 
-    function renderTracking(shipment) {
-      const currentIndex = statusSteps.indexOf(shipment.status);
-
-      const progressHTML = statusSteps.map((step, index) => {
-        let className = 'step';
-
-        if(index < currentIndex) className += ' complete';
-        if(index === currentIndex) className += ' current';
-
-        return `
-          <div class="${className}">
-            <div class="step-node">${index < currentIndex ? '✓' : index + 1}</div>
-            <div>
-              <strong>${stepLabels[step]}</strong>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      const timelineHTML = [...shipment.timeline]
-        .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))
-        .map((item,index) => `
-          <div class="timeline-item ${index === 0 ? 'latest':''}" style="animation-delay:${index * 50}ms">
-            <div class="timeline-marker"></div>
-            <div class="mono">${item.datetime}</div>
-            <div>
-              <strong>${item.event}</strong>
-              <div class="timeline-location">${item.location}</div>
-            </div>
-          </div>
-        `).join('');
-
-      results.innerHTML = `
-        <div class="shipment-header glass">
-          <div>
-            <p style="color:var(--text-secondary)">Tracking Number</p>
-            <h2 class="mono" style="margin:.4rem 0 1rem;">${shipment.awb}</h2>
-            <div class="status-badge status-${shipment.status}">
-              <div class="status-dot"></div>
-              ${formatStatus(shipment.status)}
-            </div>
-
-            <div class="route">
-              ${shipment.sender.city} ➜ ${shipment.receiver.city}
-            </div>
-          </div>
-
-          <div>
-            <p style="color:var(--text-secondary)">Estimated Delivery</p>
-            <h2>${shipment.expectedDelivery}</h2>
-
-            <div class="chip-row">
-              <div class="chip">${shipment.service}</div>
-              <div class="chip">${shipment.weight}</div>
-              <div class="chip">${shipment.dimensions}</div>
-            </div>
-
-            <div class="action-row">
-              <button class="secondary-btn" onclick="copyAWB('${shipment.awb}')">Copy AWB</button>
-              <button class="secondary-btn" onclick="window.print()">Print / Download</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="progress-section">
-          <div class="progress-wrapper glass">
-            <div class="progress">
-              ${progressHTML}
-            </div>
-          </div>
-        </div>
-
-        <div class="timeline-section">
-          <div class="timeline-card glass">
-            <h3 style="margin-bottom:1rem;">Shipment Timeline</h3>
-            ${timelineHTML}
-          </div>
-        </div>
-
-        <div class="info-grid">
-          <div class="info-card glass">
-            <div>📍</div>
-            <div class="info-label">Origin</div>
-            <h3>${shipment.sender.city}</h3>
-          </div>
-
-          <div class="info-card glass">
-            <div>🏁</div>
-            <div class="info-label">Destination</div>
-            <h3>${shipment.receiver.city}</h3>
-          </div>
-
-          <div class="info-card glass">
-            <div>🚚</div>
-            <div class="info-label">Service</div>
-            <h3>${shipment.service}</h3>
-          </div>
-
-          <div class="info-card glass">
-            <div>⚖️</div>
-            <div class="info-label">Weight</div>
-            <h3>${shipment.weight}</h3>
-          </div>
-
-          <div class="info-card glass">
-            <div>📦</div>
-            <div class="info-label">Dimensions</div>
-            <h3>${shipment.dimensions}</h3>
-          </div>
-
-          <div class="info-card glass">
-            <div>🔖</div>
-            <div class="info-label">Reference No.</div>
-            <h3 class="mono">${shipment.awb}</h3>
-          </div>
-        </div>
-      `;
-
-      results.classList.add('show');
-      results.scrollIntoView({ behavior:'smooth' });
-    }
-
-    function renderError() {
-      results.innerHTML = `
-        <div class="error-state glass">
-          <div style="font-size:3rem; margin-bottom:1rem;">⚠️</div>
-          <h2>No shipment found for this tracking number</h2>
-          <p style="color:var(--text-secondary); margin:1rem 0 2rem;">Please verify your AWB and try again.</p>
-          <button class="track-btn" onclick="resetTracking()">Try Again</button>
-        </div>
-      `;
-
-      results.classList.add('show');
-    }
-
-    function resetTracking() {
-      trackingInput.focus();
-      results.classList.remove('show');
-    }
-
-    function trackShipment() {
-      const awb = trackingInput.value.trim().toUpperCase();
-
-      if(!awb) return;
-
-      trackBtn.innerHTML = '<span class="loading-spinner"></span>';
-      trackBtn.disabled = true;
-
-      setTimeout(() => {
-        const shipment = window.shipmentDB.find(item => item.awb === awb);
-
-        if(shipment) {
-          renderTracking(shipment);
-        } else {
-          renderError();
-        }
-
-        trackBtn.innerHTML = 'TRACK';
-        trackBtn.disabled = false;
-      }, 500);
-    }
-
-    trackBtn.addEventListener('click', trackShipment);
-
-    trackingInput.addEventListener('keydown', e => {
-      if(e.key === 'Enter') trackShipment();
+    /* ─── NAVBAR SCROLL ─── */
+    window.addEventListener('scroll', () => {
+      $('nav').classList.toggle('scrolled', scrollY > 20);
     });
 
-    window.copyAWB = function(awb) {
-      navigator.clipboard.writeText(awb);
-      alert('AWB copied to clipboard');
+    /* ─── NAV LINKS ─── */
+    $('navLogoLink').addEventListener('click', e => { e.preventDefault(); $('heroSection').scrollIntoView({ behavior:'smooth' }); });
+    $('navTrackLink').addEventListener('click', e => { e.preventDefault(); $('trackingInput').scrollIntoView({ behavior:'smooth', block:'center' }); setTimeout(() => $('trackingInput').focus(), 400); });
+
+    /* ─── TOAST ─── */
+    let toastTmr;
+    function toast(msg, type = 'success') {
+      const t = $('toast');
+      const icons = { success:'✓', error:'✕' };
+      t.innerHTML = `<span>${icons[type] || '•'}</span> ${msg}`;
+      t.className = `toast show t-${type}`;
+      clearTimeout(toastTmr);
+      toastTmr = setTimeout(() => t.className = 'toast', 3200);
     }
 
-    const adminModal = document.getElementById('adminModal');
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       PUBLIC TRACKING
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    $('trackBtn').addEventListener('click', doTrack);
+    $('trackingInput').addEventListener('keydown', e => { if (e.key === 'Enter') doTrack(); });
 
-    document.getElementById('adminTrigger').addEventListener('click', e => {
-      e.preventDefault();
-      adminModal.classList.add('show');
-    });
-
-    adminModal.addEventListener('click', e => {
-      if(e.target === adminModal) {
-        adminModal.classList.remove('show');
-      }
-    });
-
-    const loginCard = document.getElementById('loginCard');
-
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      const username = document.getElementById('adminUsername').value;
-      const password = document.getElementById('adminPassword').value;
-      const error = document.getElementById('loginError');
-
-      if(username === 'admin' && password === 'admin123') {
-        localStorage.setItem('swiftpath_admin', 'true');
-        adminModal.classList.remove('show');
-        showAdmin();
-      } else {
-        error.classList.remove('hidden');
-        loginCard.classList.add('shake');
-        setTimeout(() => loginCard.classList.remove('shake'), 400);
-      }
-    });
-
-    function showAdmin() {
-      document.getElementById('publicPage').style.display = 'none';
-      document.querySelector('.footer').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-      renderDashboard();
-      renderShipmentTable();
-    }
-
-    function logout() {
-      localStorage.removeItem('swiftpath_admin');
-      document.getElementById('adminPanel').style.display = 'none';
-      document.getElementById('publicPage').style.display = 'block';
-      document.querySelector('.footer').style.display = 'flex';
-    }
-
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-    document.getElementById('adminLogoutTop').addEventListener('click', logout);
-
-    function renderDashboard() {
-      const total = window.shipmentDB.length;
-      const transit = window.shipmentDB.filter(s => s.status === 'IN_TRANSIT').length;
-      const delivered = window.shipmentDB.filter(s => s.status === 'DELIVERED').length;
-      const pending = window.shipmentDB.filter(s => s.status !== 'DELIVERED').length;
-
-      document.getElementById('kpiGrid').innerHTML = `
-        <div class="kpi-card glass"><h2>${total}</h2><p>Total Shipments</p></div>
-        <div class="kpi-card glass"><h2>${transit}</h2><p>In Transit</p></div>
-        <div class="kpi-card glass"><h2>${delivered}</h2><p>Delivered</p></div>
-        <div class="kpi-card glass"><h2>${pending}</h2><p>Pending</p></div>
-      `;
-
-      document.getElementById('recentTable').innerHTML = window.shipmentDB.slice(0,5).map(s => `
-        <tr>
-          <td class="mono">${s.awb}</td>
-          <td><span class="status-badge status-${s.status}">${formatStatus(s.status)}</span></td>
-          <td>${s.sender.city}</td>
-          <td>${s.receiver.city}</td>
-          <td>${s.bookedDate}</td>
-        </tr>
-      `).join('');
-    }
-
-    function renderShipmentTable(filterText = '', filterStatus = 'ALL') {
-      const tbody = document.getElementById('shipmentTable');
-
-      const filtered = window.shipmentDB.filter(s => {
-        const textMatch = s.awb.toLowerCase().includes(filterText.toLowerCase()) ||
-          s.sender.city.toLowerCase().includes(filterText.toLowerCase()) ||
-          s.receiver.city.toLowerCase().includes(filterText.toLowerCase());
-
-        const statusMatch = filterStatus === 'ALL' || s.status === filterStatus;
-
-        return textMatch && statusMatch;
-      });
-
-      tbody.innerHTML = filtered.map((s,index) => `
-        <tr>
-          <td class="mono">${s.awb}</td>
-          <td><span class="status-badge status-${s.status}">${formatStatus(s.status)}</span></td>
-          <td>${s.sender.city}</td>
-          <td>${s.receiver.city}</td>
-          <td>${s.bookedDate}</td>
-          <td><button class="track-btn" style="height:42px; min-width:90px;" onclick="editShipment(${index})">Edit</button></td>
-        </tr>
-      `).join('');
-    }
-
-    document.getElementById('searchShipment').addEventListener('input', e => {
-      renderShipmentTable(e.target.value, document.getElementById('statusFilter').value);
-    });
-
-    document.getElementById('statusFilter').addEventListener('change', e => {
-      renderShipmentTable(document.getElementById('searchShipment').value, e.target.value);
-    });
-
-    document.querySelectorAll('.sidebar-item[data-view]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-        btn.classList.add('active');
-
-        ['dashboardView','shipmentsView','addShipmentView'].forEach(id => {
-          document.getElementById(id).classList.add('hidden');
-        });
-
-        document.getElementById(btn.dataset.view).classList.remove('hidden');
-      });
-    });
-
-    function addEventRow(data = {}) {
-      const container = document.getElementById('eventsContainer');
-
-      const row = document.createElement('div');
-      row.className = 'event-row';
-      row.innerHTML = `
-        <input type="datetime-local" class="eventDate" value="${data.datetime ? data.datetime.replace(' ','T') : ''}">
-        <input type="text" class="eventLocation" placeholder="Location" value="${data.location || ''}">
-        <input type="text" class="eventDescription" placeholder="Event Description" value="${data.event || ''}">
-      `;
-
-      container.appendChild(row);
-    }
-
-    document.getElementById('addEventBtn').addEventListener('click', () => addEventRow());
-
-    addEventRow();
-
-    document.getElementById('shipmentForm').addEventListener('submit', e => {
-      e.preventDefault();
-
-      const requiredFields = ['awb','senderName','receiverName','originCity','destinationCity'];
-      let valid = true;
-
-      requiredFields.forEach(id => {
-        const field = document.getElementById(id);
-
-        if(!field.value.trim()) {
-          field.style.borderColor = 'var(--danger)';
-          valid = false;
-        } else {
-          field.style.borderColor = 'var(--border)';
-        }
-      });
-
-      if(!valid) {
-        alert('Please fill all required fields');
+    async function doTrack() {
+      const awb = $('trackingInput').value.trim().toUpperCase();
+      if (!awb) {
+        $('searchBox').style.animation = 'shake .35s';
+        setTimeout(() => $('searchBox').style.animation = '', 400);
         return;
       }
 
-      const shipment = {
-        awb: document.getElementById('awb').value,
-        status: document.getElementById('currentStatus').value,
-        sender: {
-          name: document.getElementById('senderName').value,
-          phone: document.getElementById('senderPhone').value,
-          city: document.getElementById('originCity').value
-        },
-        receiver: {
-          name: document.getElementById('receiverName').value,
-          phone: document.getElementById('receiverPhone').value,
-          city: document.getElementById('destinationCity').value
-        },
-        service: document.getElementById('serviceType').value,
-        weight: document.getElementById('weight').value,
-        dimensions: document.getElementById('dimensions').value,
-        bookedDate: new Date().toISOString().split('T')[0],
-        expectedDelivery: document.getElementById('deliveryDate').value,
-        timeline: [...document.querySelectorAll('.event-row')].map(row => ({
-          datetime: row.querySelector('.eventDate').value.replace('T',' '),
-          location: row.querySelector('.eventLocation').value,
-          event: row.querySelector('.eventDescription').value
-        }))
-      };
+      const btn = $('trackBtn');
+      btn.innerHTML = `<span class="spin"></span>`;
+      btn.disabled = true;
 
-      const editIndex = document.getElementById('editIndex').value;
+      const resultsEl = $('results');
+      resultsEl.classList.remove('show');
 
-      if(editIndex) {
-        window.shipmentDB[editIndex] = shipment;
-      } else {
-        window.shipmentDB.unshift(shipment);
+      try {
+        const q    = query(collection(db, 'shipments'), where('awb', '==', awb));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          renderError(awb);
+        } else {
+          snap.forEach(d => renderResult(d.data()));
+        }
+      } catch (err) {
+        console.error(err);
+        renderError(awb);
+        toast('Connection error. Please try again.', 'error');
       }
 
-      renderDashboard();
-      renderShipmentTable();
-
-      alert('Shipment saved successfully');
-      e.target.reset();
-      document.getElementById('eventsContainer').innerHTML = '';
-      addEventRow();
-      document.getElementById('editIndex').value = '';
-    });
-
-    window.editShipment = function(index) {
-      const shipment = window.shipmentDB[index];
-
-      document.querySelector('[data-view="addShipmentView"]').click();
-
-      document.getElementById('editIndex').value = index;
-      document.getElementById('awb').value = shipment.awb;
-      document.getElementById('senderName').value = shipment.sender.name;
-      document.getElementById('senderPhone').value = shipment.sender.phone;
-      document.getElementById('receiverName').value = shipment.receiver.name;
-      document.getElementById('receiverPhone').value = shipment.receiver.phone;
-      document.getElementById('originCity').value = shipment.sender.city;
-      document.getElementById('destinationCity').value = shipment.receiver.city;
-      document.getElementById('serviceType').value = shipment.service;
-      document.getElementById('weight').value = shipment.weight;
-      document.getElementById('dimensions').value = shipment.dimensions;
-      document.getElementById('deliveryDate').value = shipment.expectedDelivery;
-      document.getElementById('currentStatus').value = shipment.status;
-
-      document.getElementById('eventsContainer').innerHTML = '';
-      shipment.timeline.forEach(event => addEventRow(event));
+      btn.innerHTML = `Track <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+      btn.disabled = false;
     }
 
-    if(localStorage.getItem('swiftpath_admin') === 'true') {
-      showAdmin();
+    function renderResult(s) {
+      const idx = STATUS_STEPS.indexOf(s.status);
+
+      const steps = STATUS_STEPS.map((st, i) => {
+        let cls = 'step-item';
+        if (i < idx)  cls += ' s-done';
+        if (i === idx) cls += ' s-current';
+        return `<div class="${cls}">
+          <div class="step-node">${i < idx ? '✓' : i + 1}</div>
+          <div class="step-label">${STATUS_LABELS[st]}</div>
+        </div>`;
+      }).join('');
+
+      const timeline = (s.timeline || []).slice().sort((a,b) => new Date(b.datetime) - new Date(a.datetime));
+
+      const timelineHTML = timeline.length
+        ? timeline.map((t, i) => `
+            <div class="t-item ${i === 0 ? 't-latest' : ''}" style="animation-delay:${i * 0.06}s">
+              <div class="t-line">
+                <div class="t-dot"></div>
+                ${i < timeline.length - 1 ? '<div class="t-bar"></div>' : ''}
+              </div>
+              <div>
+                <div class="t-event">${t.event}</div>
+                <div class="t-loc">📍 ${t.location}</div>
+                <div class="t-time">${t.datetime}</div>
+              </div>
+            </div>`).join('')
+        : '<p style="color:var(--gray-400);padding:8px 0;font-size:.875rem">No timeline events recorded yet.</p>';
+
+      const resultsEl = $('results');
+      resultsEl.innerHTML = `
+        <div class="result-header">
+          <div>
+            <div class="result-awb-label">Tracking Number</div>
+            <div class="result-awb mono">${s.awb}</div>
+            <div class="result-route">
+              <span>${s.sender?.city || '—'}</span>
+              <span class="route-arrow">→</span>
+              <span>${s.receiver?.city || '—'}</span>
+            </div>
+            <div class="result-chips">
+              ${badge(s.status)}
+              <span class="r-chip">📦 ${s.service || 'Standard'}</span>
+              ${s.weight ? `<span class="r-chip">⚖ ${s.weight} kg</span>` : ''}
+              ${s.dimensions ? `<span class="r-chip">📐 ${s.dimensions}</span>` : ''}
+            </div>
+          </div>
+          <div class="result-right">
+            <div class="result-eta-label">Estimated Delivery</div>
+            <div class="result-eta">${s.expectedDelivery || '—'}</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-title">Delivery Progress</div>
+          <div class="stepper">${steps}</div>
+        </div>
+
+        <div class="result-panels">
+          <div class="panel">
+            <div class="panel-title">Parties</div>
+            <div class="person-row">
+              <div class="person-avatar">📤</div>
+              <div>
+                <div class="person-name">${s.sender?.name || '—'}</div>
+                <div class="person-phone">${s.sender?.phone || ''}</div>
+              </div>
+              <div class="person-tag">Sender</div>
+            </div>
+            <div class="person-row">
+              <div class="person-avatar">📥</div>
+              <div>
+                <div class="person-name">${s.receiver?.name || '—'}</div>
+                <div class="person-phone">${s.receiver?.phone || ''}</div>
+              </div>
+              <div class="person-tag">Receiver</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title">Shipment Info</div>
+            ${[
+              ['Service',    s.service || '—'],
+              ['Weight',     s.weight ? s.weight + ' kg' : '—'],
+              ['Dimensions', s.dimensions || '—'],
+              ['ETA',        s.expectedDelivery || '—'],
+            ].map(([k,v]) => `
+              <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-100);font-size:.875rem;">
+                <span style="color:var(--gray-500);font-weight:500">${k}</span>
+                <span style="font-weight:600;color:var(--gray-900)">${v}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="timeline-wrap">
+          <div class="panel-title" style="margin-bottom:16px;">Shipment Timeline</div>
+          ${timelineHTML}
+        </div>
+      `;
+
+      resultsEl.classList.add('show');
+      setTimeout(() => resultsEl.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
     }
 
-    window.addEventListener('scroll', () => {
-      const header = document.getElementById('header');
-      header.classList.toggle('scrolled', window.scrollY > 10);
+    function renderError(awb) {
+      const r = $('results');
+      r.innerHTML = `
+        <div class="result-error">
+          <div class="err-icon">🔍</div>
+          <h3>No shipment found</h3>
+          <p>We couldn't find a record for <strong>${awb}</strong>.<br>Please double-check the tracking number and try again.</p>
+        </div>`;
+      r.classList.add('show');
+      setTimeout(() => r.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       ADMIN LOGIN
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    $('adminTrigger').addEventListener('click', () => {
+      $('loginOverlay').classList.add('show');
+      setTimeout(() => $('adminUser').focus(), 120);
     });
+
+    function closeLogin() {
+      $('loginOverlay').classList.remove('show');
+      $('loginErr').classList.add('hidden');
+      $('adminUser').value = $('adminPass').value = '';
+    }
+
+    $('modalCloseBtn').addEventListener('click', closeLogin);
+    $('loginOverlay').addEventListener('click', e => { if (e.target === $('loginOverlay')) closeLogin(); });
+    $('adminPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    $('loginBtn').addEventListener('click', doLogin);
+
+    function doLogin() {
+      if ($('adminUser').value.trim() === ADMIN_USER && $('adminPass').value === ADMIN_PASS) {
+        closeLogin();
+        $('publicPage').style.display = 'none';
+        $('adminShell').style.display = 'block';
+        loadAll();
+        toast('Welcome back, Admin!', 'success');
+      } else {
+        $('loginErr').classList.remove('hidden');
+        $('adminPass').value = '';
+        document.querySelector('.modal-box').style.animation = 'none';
+        requestAnimationFrame(() => {
+          document.querySelector('.modal-box').style.animation = 'shake .35s';
+        });
+      }
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       LOGOUT
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    function doLogout() {
+      $('adminShell').style.display = 'none';
+      $('publicPage').style.display = 'block';
+      toast('Logged out.', 'success');
+    }
+
+    $('logoutBtn').addEventListener('click', doLogout);
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SIDEBAR NAVIGATION
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    const VIEWS = ['dashView','allView','addView'];
+
+    function switchView(target) {
+      document.querySelectorAll('.s-item[data-view]').forEach(b => {
+        b.classList.toggle('active', b.dataset.view === target);
+      });
+      VIEWS.forEach(v => $( v).classList.toggle('hidden', v !== target));
+
+      if (target === 'dashView') loadAll();
+      if (target === 'allView')  { loadAll().then(renderAllTable); }
+      if (target === 'addView')  { resetForm(); }
+    }
+
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => switchView(btn.dataset.view));
+    });
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       DATA
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    let allData = [];
+
+    async function loadAll() {
+      try {
+        const snap = await getDocs(collection(db, 'shipments'));
+        allData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderKPIs();
+        renderRecent();
+      } catch (e) {
+        console.error(e);
+        toast('Failed to load data.', 'error');
+      }
+    }
+
+    function renderKPIs() {
+      const total   = allData.length;
+      const deliv   = allData.filter(s => s.status === 'DELIVERED').length;
+      const transit = allData.filter(s => ['IN_TRANSIT','OUT_FOR_DELIVERY'].includes(s.status)).length;
+      const excep   = allData.filter(s => s.status === 'EXCEPTION').length;
+      const rate    = total ? Math.round(deliv / total * 100) : 0;
+
+      $('kpiGrid').innerHTML = [
+        { icon:'📦', label:'Total',         sub:'shipments',          val: total,        col:'var(--gray-950)' },
+        { icon:'✅', label:'Delivered',      sub:`${rate}% success`,  val: deliv,        col:'var(--green)' },
+        { icon:'🚚', label:'In Transit',     sub:'active',             val: transit,      col:'var(--amber)' },
+        { icon:'⚠️', label:'Exceptions',     sub:'need attention',     val: excep,        col:'var(--red)' },
+      ].map(k => `
+        <div class="kpi-card">
+          <div class="kpi-icon">${k.icon}</div>
+          <div class="kpi-value" style="color:${k.col}">${k.val}</div>
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-sub">${k.sub}</div>
+        </div>`).join('');
+    }
+
+    function renderRecent() {
+      const rows = allData.slice(0,10);
+      $('recentTbody').innerHTML = rows.length
+        ? rows.map(s => `<tr>
+            <td class="mono" style="font-weight:600;color:var(--gray-900)">${s.awb}</td>
+            <td>${badge(s.status)}</td>
+            <td>${s.sender?.city||'—'}</td>
+            <td>${s.receiver?.city||'—'}</td>
+            <td>${s.expectedDelivery||'—'}</td>
+          </tr>`).join('')
+        : `<tr><td colspan="5"><div class="empty"><div class="empty-icon">📭</div><p>No shipments yet</p></div></td></tr>`;
+    }
+
+    function renderAllTable() {
+      const search = ($('searchInput').value || '').trim().toLowerCase();
+      const status = $('statusFilter').value;
+
+      let list = allData;
+      if (status !== 'ALL') list = list.filter(s => s.status === status);
+      if (search) list = list.filter(s =>
+        [s.awb, s.sender?.city, s.receiver?.city, s.sender?.name, s.receiver?.name]
+          .some(v => (v||'').toLowerCase().includes(search))
+      );
+
+      $('allTbody').innerHTML = list.length
+        ? list.map(s => `<tr>
+            <td class="mono" style="font-weight:600;color:var(--gray-900)">${s.awb}</td>
+            <td>${badge(s.status)}</td>
+            <td>${s.sender?.city||'—'}</td>
+            <td>${s.receiver?.city||'—'}</td>
+            <td>${s.expectedDelivery||'—'}</td>
+            <td>
+              <div class="tbl-act">
+                <button class="act-edit" onclick="editShipment('${s.id}')">Edit</button>
+                <button class="act-del"  onclick="promptDel('${s.id}')">Delete</button>
+              </div>
+            </td>
+          </tr>`).join('')
+        : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🔍</div><p>Nothing found</p></div></td></tr>`;
+    }
+
+    $('searchInput').addEventListener('input', renderAllTable);
+    $('statusFilter').addEventListener('change', renderAllTable);
+    $('refreshBtn').addEventListener('click', () => loadAll().then(() => toast('Data refreshed!')));
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       TIMELINE EVENTS
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    let evtCount = 0;
+
+    function addEvtRow(data = {}) {
+      evtCount++;
+      const id  = `ev_${evtCount}`;
+      const row = document.createElement('div');
+      row.className = 'evt-row';
+      row.id = id;
+      row.innerHTML = `
+        <div class="field">
+          <label>Date & Time</label>
+          <input type="datetime-local" class="e-dt" value="${data.datetimeISO || ''}">
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <input type="text" class="e-loc" placeholder="City / Hub" value="${data.location || ''}">
+        </div>
+        <div class="field">
+          <label>Event Description</label>
+          <input type="text" class="e-evt" placeholder="e.g. Picked up from sender" value="${data.event || ''}">
+        </div>
+        <button type="button" class="rm-evt-btn" onclick="removeEvt('${id}')">✕</button>`;
+      $('evtContainer').appendChild(row);
+    }
+
+    window.removeEvt = id => { const e = $(id); if (e) e.remove(); };
+
+    $('addEvtBtn').addEventListener('click', () => addEvtRow());
+
+    function getEvts() {
+      return Array.from($('evtContainer').querySelectorAll('.evt-row')).map(row => {
+        const dtVal = row.querySelector('.e-dt').value;
+        return {
+          datetime:    dtVal ? new Date(dtVal).toLocaleString('en-IN') : new Date().toLocaleString('en-IN'),
+          datetimeISO: dtVal,
+          location:    row.querySelector('.e-loc').value.trim(),
+          event:       row.querySelector('.e-evt').value.trim()
+        };
+      }).filter(r => r.event);
+    }
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       FORM RESET
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    function resetForm() {
+      $('shipForm').reset();
+      $('editDocId').value = '';
+      $('evtContainer').innerHTML = '';
+      $('cancelEditBtn').classList.add('hidden');
+      $('formTitle').textContent = 'New Shipment';
+      $('formSub').textContent   = 'Fill in the details below';
+      $('saveBtn').textContent   = 'Save Shipment';
+      evtCount = 0;
+    }
+
+    $('cancelEditBtn').addEventListener('click', resetForm);
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       EDIT
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    window.editShipment = function(docId) {
+      const s = allData.find(x => x.id === docId);
+      if (!s) return;
+
+      switchView('addView');
+
+      $('formTitle').textContent = 'Edit Shipment';
+      $('formSub').textContent   = `Editing ${s.awb}`;
+      $('saveBtn').textContent   = 'Update Shipment';
+      $('cancelEditBtn').classList.remove('hidden');
+      $('editDocId').value       = docId;
+
+      $('fAwb').value     = s.awb || '';
+      $('fStatus').value  = s.status || 'BOOKED';
+      $('fService').value = s.service || 'Express';
+      $('fETA').value     = s.expectedDelivery || '';
+      $('fWeight').value  = s.weight || '';
+      $('fDim').value     = s.dimensions || '';
+      $('fSName').value   = s.sender?.name || '';
+      $('fSPhone').value  = s.sender?.phone || '';
+      $('fOrigin').value  = s.sender?.city || '';
+      $('fRName').value   = s.receiver?.name || '';
+      $('fRPhone').value  = s.receiver?.phone || '';
+      $('fDest').value    = s.receiver?.city || '';
+
+      $('evtContainer').innerHTML = '';
+      evtCount = 0;
+      (s.timeline || []).forEach(t => addEvtRow(t));
+    };
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       DELETE
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    let pendingDel = null;
+
+    window.promptDel = function(id) {
+      pendingDel = id;
+      $('confirmOverlay').classList.add('show');
+    };
+
+    $('confirmCancel').addEventListener('click', () => {
+      $('confirmOverlay').classList.remove('show');
+      pendingDel = null;
+    });
+
+    $('confirmOverlay').addEventListener('click', e => {
+      if (e.target === $('confirmOverlay')) { $('confirmOverlay').classList.remove('show'); pendingDel = null; }
+    });
+
+    $('confirmDel').addEventListener('click', async () => {
+      if (!pendingDel) return;
+      $('confirmOverlay').classList.remove('show');
+      try {
+        await deleteDoc(doc(db,'shipments',pendingDel));
+        allData = allData.filter(s => s.id !== pendingDel);
+        renderAllTable();
+        renderKPIs();
+        renderRecent();
+        toast('Shipment deleted.', 'error');
+      } catch (e) {
+        console.error(e);
+        toast('Delete failed.', 'error');
+      }
+      pendingDel = null;
+    });
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SAVE / UPDATE
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    $('shipForm').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const awb    = $('fAwb').value.trim().toUpperCase();
+      const origin = $('fOrigin').value.trim();
+      const dest   = $('fDest').value.trim();
+
+      if (!awb || !origin || !dest) {
+        toast('AWB, Origin City and Destination are required.', 'error');
+        return;
+      }
+
+      const docId = $('editDocId').value;
+      let timeline = getEvts();
+      if (!docId && !timeline.length) {
+        timeline = [{
+          datetime:    new Date().toLocaleString('en-IN'),
+          datetimeISO: new Date().toISOString(),
+          location:    origin,
+          event:       'Shipment Created'
+        }];
+      }
+
+      const payload = {
+        awb,
+        status:           $('fStatus').value,
+        service:          $('fService').value,
+        expectedDelivery: $('fETA').value,
+        weight:           $('fWeight').value.trim(),
+        dimensions:       $('fDim').value.trim(),
+        sender:   { name: $('fSName').value.trim(), phone: $('fSPhone').value.trim(), city: origin },
+        receiver: { name: $('fRName').value.trim(), phone: $('fRPhone').value.trim(), city: dest },
+        timeline
+      };
+
+      const saveBtn = $('saveBtn');
+      saveBtn.innerHTML = `<span class="spin"></span> Saving…`;
+      saveBtn.disabled = true;
+
+      try {
+        if (docId) {
+          await updateDoc(doc(db,'shipments',docId), payload);
+          const i = allData.findIndex(s => s.id === docId);
+          if (i !== -1) allData[i] = { id: docId, ...payload };
+          toast('Shipment updated!', 'success');
+        } else {
+          const ref = await addDoc(collection(db,'shipments'), payload);
+          allData.unshift({ id: ref.id, ...payload });
+          toast('Shipment saved!', 'success');
+        }
+        resetForm();
+      } catch (err) {
+        console.error(err);
+        toast('Error saving. Check console.', 'error');
+      }
+
+      saveBtn.textContent = docId ? 'Update Shipment' : 'Save Shipment';
+      saveBtn.disabled = false;
+    });
+
   </script>
 </body>
 </html>
