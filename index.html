@@ -65,7 +65,12 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--white);
+      background-color: var(--white);
+      background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.025) 1px, transparent 1px);
+      background-size: 32px 32px;
+      background-position: center top;
       color: var(--gray-900);
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
@@ -249,17 +254,14 @@
       font-weight: 900;
       line-height: 1.03;
       letter-spacing: -2.5px;
-      color: var(--gray-950);
+      color: #0a2f7a; /* Logo Blue */
       margin-bottom: 20px;
       animation: fadeUp .7s .08s var(--ease-out) both;
       position: relative;
     }
 
     .hero-title .accent {
-      background: linear-gradient(135deg, var(--red) 0%, #ff6b35 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--red); /* Logo Red */
     }
 
     .hero-sub {
@@ -1652,16 +1654,14 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
         </div>
-
-        <div class="search-hint">
-          Try TWC100001, TWC100002 &nbsp;·&nbsp; Press <kbd>↵ Enter</kbd> to track
-        </div>
       </div>
+
+
 
       <div class="trust-strip">
         <div class="trust-item">
-          <div class="trust-num">2M+</div>
-          <div class="trust-label">Shipments tracked</div>
+          <div class="trust-num">Real-time</div>
+          <div class="trust-label">Tracking</div>
         </div>
         <div class="trust-item">
           <div class="trust-num">99.8%</div>
@@ -2282,14 +2282,32 @@
             <td>${s.receiver?.city||'—'}</td>
             <td>${s.expectedDelivery||'—'}</td>
             <td>
-              <div class="tbl-act">
-                <button class="act-edit" onclick="editShipment('${s.id}')">Edit</button>
-                <button class="act-del"  onclick="promptDel('${s.id}')">Delete</button>
+              <div class="tbl-act" style="display:flex; align-items:center; gap:12px;">
+                <select class="inline-status-select" onchange="quickUpdateStatus('${s.id}', this.value)" style="padding:4px 8px; border-radius:6px; border:1px solid var(--gray-200); font-size:0.75rem; font-weight:600; cursor:pointer; background:var(--gray-50); outline:none;">
+                  ${STATUS_STEPS.concat(['EXCEPTION']).map(st => `<option value="${st}" ${st === s.status ? 'selected' : ''}>${STATUS_LABELS[st]}</option>`).join('')}
+                </select>
+                <button class="act-btn-icon" onclick="editShipment('${s.id}')" title="Edit" style="background:none; border:none; cursor:pointer; font-size:1.1rem; opacity:0.7; transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">✏️</button>
+                <button class="act-btn-icon" onclick="promptDel('${s.id}')" title="Delete" style="background:none; border:none; cursor:pointer; font-size:1.1rem; margin-left:-4px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🗑️</button>
               </div>
             </td>
           </tr>`).join('')
         : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🔍</div><p>Nothing found</p></div></td></tr>`;
     }
+
+    window.quickUpdateStatus = async (id, newStatus) => {
+      try {
+        await updateDoc(doc(db, 'shipments', id), { status: newStatus });
+        toast('Status updated to ' + STATUS_LABELS[newStatus], 'success');
+        const s = allData.find(x => x.id === id);
+        if (s) s.status = newStatus;
+        renderKPIs();
+        renderRecent();
+        renderAllTable();
+      } catch (e) {
+        console.error(e);
+        toast('Failed to update status', 'error');
+      }
+    };
 
     $('searchInput').addEventListener('input', renderAllTable);
     $('statusFilter').addEventListener('change', renderAllTable);
