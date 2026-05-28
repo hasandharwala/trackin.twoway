@@ -459,6 +459,7 @@
       font-weight: 600;
       color: var(--gray-700);
       margin-bottom: 16px;
+      text-transform: capitalize;
     }
 
     .route-arrow {
@@ -570,6 +571,7 @@
       letter-spacing: -.4px;
       margin-bottom: 6px;
       line-height: 1.2;
+      text-transform: capitalize;
     }
 
     .party-phone {
@@ -590,6 +592,7 @@
       font-size: .8rem;
       font-weight: 600;
       color: var(--gray-600);
+      text-transform: capitalize;
     }
 
     .party-divider {
@@ -622,13 +625,56 @@
     .party-to-block { text-align: right; }
 
     @media (max-width: 640px) {
+      /* Keep parties card side-by-side but scale down */
       .parties-card {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 8px;
+        padding: 24px 16px;
       }
-      .party-to-block { text-align: left; }
-      .party-divider { flex-direction: row; }
-      .party-divider-line { width: 20px; height: 1px; }
+      .party-name { font-size: 1rem; }
+      .party-phone { font-size: .75rem; }
+      .party-city { font-size: .7rem; padding: 4px 8px; }
+      .party-arrow-wrap { width: 32px; height: 32px; font-size: .9rem; }
+      .party-tag { font-size: .6rem; }
+
+      /* Convert stepper to vertical timeline */
+      .stepper {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .step-item {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        grid-template-rows: auto auto;
+        column-gap: 16px;
+        align-items: center;
+        padding: 16px;
+      }
+      .step-node {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        margin: 0 auto;
+      }
+      .step-label {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: left;
+        margin-top: 0;
+        align-self: end;
+      }
+      .step-sub {
+        grid-column: 2;
+        grid-row: 2;
+        text-align: left;
+        padding: 0;
+        margin-top: 2px;
+        align-self: start;
+      }
+      .step-item:not(:last-child)::after {
+        top: 52px;
+        left: 33px; /* 16px padding + 17px center */
+        width: 2px;
+        height: calc(100% - 20px);
+      }
     }
 
     .panel {
@@ -1880,7 +1926,7 @@
                 <div class="form-grid">
                   <div class="field">
                     <label>Sender Name</label>
-                    <input type="text" id="fSName" placeholder="Full name">
+                    <input type="text" id="fSName" class="auto-cap" placeholder="Full name">
                   </div>
                   <div class="field">
                     <label>Sender Phone</label>
@@ -1888,7 +1934,7 @@
                   </div>
                   <div class="field">
                     <label>Origin City *</label>
-                    <input type="text" id="fOrigin" placeholder="Mumbai" required>
+                    <input type="text" id="fOrigin" class="auto-cap" placeholder="Mumbai" required>
                   </div>
                 </div>
 
@@ -1896,7 +1942,7 @@
                 <div class="form-grid">
                   <div class="field">
                     <label>Receiver Name</label>
-                    <input type="text" id="fRName" placeholder="Full name">
+                    <input type="text" id="fRName" class="auto-cap" placeholder="Full name">
                   </div>
                   <div class="field">
                     <label>Receiver Phone</label>
@@ -1904,7 +1950,7 @@
                   </div>
                   <div class="field">
                     <label>Destination City *</label>
-                    <input type="text" id="fDest" placeholder="Delhi" required>
+                    <input type="text" id="fDest" class="auto-cap" placeholder="Delhi" required>
                   </div>
                 </div>
 
@@ -2277,11 +2323,11 @@
         </div>
         <div class="field">
           <label>Location</label>
-          <input type="text" class="e-loc" placeholder="City / Hub" value="${data.location || ''}">
+          <input type="text" class="e-loc auto-cap" placeholder="City / Hub" value="${data.location || ''}">
         </div>
         <div class="field">
           <label>Event Description</label>
-          <input type="text" class="e-evt" placeholder="e.g. Picked up from sender" value="${data.event || ''}">
+          <input type="text" class="e-evt auto-cap" placeholder="e.g. Picked up from sender" value="${data.event || ''}">
         </div>
         <button type="button" class="rm-evt-btn" onclick="removeEvt('${id}')">✕</button>`;
       $('evtContainer').appendChild(row);
@@ -2449,6 +2495,22 @@
 
       saveBtn.textContent = docId ? 'Update Shipment' : 'Save Shipment';
       saveBtn.disabled = false;
+    });
+
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       AUTO-CAPITALIZATION
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    document.addEventListener('input', e => {
+      if (e.target && e.target.classList.contains('auto-cap')) {
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+        const oldVal = e.target.value;
+        const newVal = oldVal.replace(/(^|\s|-)\w/g, c => c.toUpperCase());
+        if (oldVal !== newVal) {
+          e.target.value = newVal;
+          e.target.setSelectionRange(start, end);
+        }
+      }
     });
 
   </script>
