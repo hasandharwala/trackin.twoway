@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TWO WAY — Precision Logistics</title>
+  <title>SWIFTPATH — Precision Logistics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #F5F7FB;
-      --bg-secondary: #FFFFFF;
-      --bg-glass: rgba(255,255,255,0.72);
-      --accent: #ED1C24;
-      --accent-glow: rgba(237,28,36,0.18);
-      --text-primary: #0A2F7A;
-      --text-secondary: #5E6B85;
-      --border: rgba(10,47,122,0.08);
+      --bg-primary: #0A0A0F;
+      --bg-secondary: #111118;
+      --bg-glass: rgba(255,255,255,0.04);
+      --accent: #F5A623;
+      --accent-glow: rgba(245,166,35,0.15);
+      --text-primary: #F0F0F5;
+      --text-secondary: #8A8A9A;
+      --border: rgba(255,255,255,0.07);
       --success: #22C55E;
       --warning: #F59E0B;
       --danger: #EF4444;
@@ -29,7 +29,7 @@
 
     body {
       font-family: 'DM Sans', sans-serif;
-      background: linear-gradient(180deg,#FFFFFF 0%,#F6F9FF 100%);
+      background: var(--bg-primary);
       color: var(--text-primary);
       overflow-x: hidden;
       min-height: 100vh;
@@ -41,7 +41,7 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(circle at center, rgba(237,28,36,0.04), transparent 50%),
+        radial-gradient(circle at center, rgba(245,166,35,0.03), transparent 50%),
         linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
       background-size: cover, 40px 40px, 40px 40px;
@@ -899,9 +899,9 @@
       <div class="logo">
         <div class="logo-top">
           <div class="logo-icon">➜</div>
-          TWO WAY
+          SWIFTPATH
         </div>
-        <div class="tagline">Cargo • Movers • Express Delivery</div>
+        <div class="tagline">Precision. Speed. Delivery.</div>
       </div>
 
       <nav>
@@ -1146,315 +1146,513 @@
   </section>
 
   <footer class="footer">
-    <div>© 2026 TWO WAY Logistics. All rights reserved.</div>
-    <div>support@twowaycargo.in</div>
+    <div>© 2026 SWIFTPATH Logistics. All rights reserved.</div>
+    <div>support@swiftpathlogistics.com</div>
   </footer>
 
- <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCOW_Y-AZrirAoW3-RIafPmNJI1dlNPmLA",
-  authDomain: "tracking-twoway.firebaseapp.com",
-  projectId: "tracking-twoway",
-  storageBucket: "tracking-twoway.firebasestorage.app",
-  messagingSenderId: "445415365945",
-  appId: "1:445415365945:web:8eecd941fa27bfaaf39ce8"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const trackingInput = document.getElementById('trackingInput');
-const trackBtn = document.getElementById('trackBtn');
-const results = document.getElementById('results');
-
-const statusSteps = [
-  'BOOKED',
-  'PICKED_UP',
-  'IN_TRANSIT',
-  'OUT_FOR_DELIVERY',
-  'DELIVERED'
-];
-
-const stepLabels = {
-  BOOKED:'Booked',
-  PICKED_UP:'Picked Up',
-  IN_TRANSIT:'In Transit',
-  OUT_FOR_DELIVERY:'Out for Delivery',
-  DELIVERED:'Delivered'
-};
-
-function formatStatus(status) {
-  return status.replaceAll('_',' ');
-}
-
-function renderTracking(shipment) {
-
-  const currentIndex = statusSteps.indexOf(shipment.status);
-
-  const progressHTML = statusSteps.map((step, index) => {
-
-    let className = 'step';
-
-    if(index < currentIndex) className += ' complete';
-
-    if(index === currentIndex) className += ' current';
-
-    return `
-      <div class="${className}">
-        <div class="step-node">
-          ${index < currentIndex ? '✓' : index + 1}
-        </div>
-
-        <div>
-          <strong>${stepLabels[step]}</strong>
-        </div>
-      </div>
-    `;
-
-  }).join('');
-
-  const timelineHTML = shipment.timeline
-  .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))
-  .map((item,index) => `
-
-    <div class="timeline-item ${index === 0 ? 'latest':''}">
-
-      <div class="timeline-marker"></div>
-
-      <div class="mono">${item.datetime}</div>
-
-      <div>
-        <strong>${item.event}</strong>
-        <div class="timeline-location">
-          ${item.location}
-        </div>
-      </div>
-
-    </div>
-
-  `).join('');
-
-  results.innerHTML = `
-
-    <div class="shipment-header glass">
-
-      <div>
-
-        <p style="color:var(--text-secondary)">
-          Tracking Number
-        </p>
-
-        <h2 class="mono">
-          ${shipment.awb}
-        </h2>
-
-        <div class="status-badge status-${shipment.status}">
-          <div class="status-dot"></div>
-          ${formatStatus(shipment.status)}
-        </div>
-
-        <div class="route">
-          ${shipment.sender.city}
-          ➜
-          ${shipment.receiver.city}
-        </div>
-
-      </div>
-
-      <div>
-
-        <p style="color:var(--text-secondary)">
-          Estimated Delivery
-        </p>
-
-        <h2>${shipment.expectedDelivery}</h2>
-
-      </div>
-
-    </div>
-
-    <div class="progress-section">
-      <div class="progress-wrapper glass">
-        <div class="progress">
-          ${progressHTML}
-        </div>
-      </div>
-    </div>
-
-    <div class="timeline-section">
-      <div class="timeline-card glass">
-
-        <h3 style="margin-bottom:1rem;">
-          Shipment Timeline
-        </h3>
-
-        ${timelineHTML}
-
-      </div>
-    </div>
-
-  `;
-
-  results.classList.add('show');
-
-}
-
-function renderError() {
-
-  results.innerHTML = `
-
-    <div class="error-state glass">
-
-      <h2>No shipment found</h2>
-
-    </div>
-
-  `;
-
-  results.classList.add('show');
-
-}
-
-async function trackShipment() {
-
-  const awb = trackingInput.value.trim().toUpperCase();
-
-  if(!awb) return;
-
-  trackBtn.innerHTML = 'Loading...';
-
-  const q = query(
-    collection(db, "shipments"),
-    where("awb", "==", awb)
-  );
-
-  const querySnapshot = await getDocs(q);
-
-  if(querySnapshot.empty) {
-
-    renderError();
-
-    trackBtn.innerHTML = 'TRACK';
-
-    return;
-
-  }
-
-  querySnapshot.forEach((doc) => {
-
-    renderTracking(doc.data());
-
-  });
-
-  trackBtn.innerHTML = 'TRACK';
-
-}
-
-trackBtn.addEventListener('click', trackShipment);
-
-trackingInput.addEventListener('keydown', e => {
-
-  if(e.key === 'Enter') {
-
-    trackShipment();
-
-  }
-
-});
-
-document.getElementById('shipmentForm')
-.addEventListener('submit', async (e) => {
-
-  e.preventDefault();
-
-  const shipment = {
-
-    awb: document.getElementById('awb').value,
-
-    status: document.getElementById('currentStatus').value,
-
-    sender: {
-
-      name: document.getElementById('senderName').value,
-
-      phone: document.getElementById('senderPhone').value,
-
-      city: document.getElementById('originCity').value
-
-    },
-
-    receiver: {
-
-      name: document.getElementById('receiverName').value,
-
-      phone: document.getElementById('receiverPhone').value,
-
-      city: document.getElementById('destinationCity').value
-
-    },
-
-    service: document.getElementById('serviceType').value,
-
-    weight: document.getElementById('weight').value,
-
-    dimensions: document.getElementById('dimensions').value,
-
-    expectedDelivery:
-      document.getElementById('deliveryDate').value,
-
-    timeline: [
-
+  <script>
+    window.shipmentDB = [
       {
-        datetime: new Date().toLocaleString(),
-        location: document.getElementById('originCity').value,
-        event: 'Shipment Created'
+        awb: 'TWC100001',
+        status: 'IN_TRANSIT',
+        sender: { name:'Rahul Mehta', phone:'9876543210', city:'Mumbai' },
+        receiver: { name:'Ayesha Khan', phone:'9988776655', city:'Delhi' },
+        service:'Express',
+        weight:'2.5 kg',
+        dimensions:'30x20x15 cm',
+        bookedDate:'2026-05-21',
+        expectedDelivery:'2026-05-29',
+        timeline:[
+          { datetime:'2026-05-28 10:00', location:'Delhi Hub', event:'Shipment arrived at destination hub' },
+          { datetime:'2026-05-27 21:00', location:'Mumbai Airport', event:'Departed origin facility' },
+          { datetime:'2026-05-27 14:30', location:'Mumbai Hub', event:'Shipment booked and picked up' }
+        ]
+      },
+      {
+        awb: 'TWC100002',
+        status: 'DELIVERED',
+        sender: { name:'Priya Shah', phone:'9000000011', city:'Ahmedabad' },
+        receiver: { name:'Omar Ali', phone:'9223344556', city:'Pune' },
+        service:'Standard',
+        weight:'1.2 kg',
+        dimensions:'18x12x8 cm',
+        bookedDate:'2026-05-20',
+        expectedDelivery:'2026-05-24',
+        timeline:[
+          { datetime:'2026-05-24 13:00', location:'Pune', event:'Shipment delivered successfully' },
+          { datetime:'2026-05-24 09:00', location:'Pune Local', event:'Out for delivery' },
+          { datetime:'2026-05-23 18:00', location:'Pune Hub', event:'Arrived at destination facility' }
+        ]
+      },
+      {
+        awb: 'TWC100003',
+        status: 'OUT_FOR_DELIVERY',
+        sender: { name:'Arjun Patel', phone:'9111222233', city:'Surat' },
+        receiver: { name:'Sara Khan', phone:'9887766554', city:'Bhopal' },
+        service:'Express',
+        weight:'5 kg',
+        dimensions:'40x35x25 cm',
+        bookedDate:'2026-05-22',
+        expectedDelivery:'2026-05-28',
+        timeline:[
+          { datetime:'2026-05-28 08:30', location:'Bhopal Local', event:'Out for delivery' },
+          { datetime:'2026-05-27 23:30', location:'Bhopal Hub', event:'Arrived at destination hub' }
+        ]
+      },
+      {
+        awb: 'TWC100004',
+        status: 'BOOKED',
+        sender: { name:'Nikhil Jain', phone:'9876501234', city:'Indore' },
+        receiver: { name:'Fatima Noor', phone:'9765432109', city:'Jaipur' },
+        service:'Economy',
+        weight:'8 kg',
+        dimensions:'60x40x30 cm',
+        bookedDate:'2026-05-28',
+        expectedDelivery:'2026-06-01',
+        timeline:[
+          { datetime:'2026-05-28 11:00', location:'Indore', event:'Shipment booked successfully' }
+        ]
+      },
+      {
+        awb: 'TWC100005',
+        status: 'EXCEPTION',
+        sender: { name:'Zoya Merchant', phone:'9001112233', city:'Hyderabad' },
+        receiver: { name:'Imran Sheikh', phone:'9332211455', city:'Lucknow' },
+        service:'Standard',
+        weight:'3.8 kg',
+        dimensions:'28x18x18 cm',
+        bookedDate:'2026-05-25',
+        expectedDelivery:'2026-05-30',
+        timeline:[
+          { datetime:'2026-05-27 16:00', location:'Nagpur Hub', event:'Weather delay in transit' },
+          { datetime:'2026-05-26 19:00', location:'Hyderabad Facility', event:'Shipment departed sorting facility' }
+        ]
+      }
+    ];
+
+    const statusSteps = ['BOOKED','PICKED_UP','IN_TRANSIT','OUT_FOR_DELIVERY','DELIVERED'];
+    const stepLabels = {
+      BOOKED:'Booked',
+      PICKED_UP:'Picked Up',
+      IN_TRANSIT:'In Transit',
+      OUT_FOR_DELIVERY:'Out for Delivery',
+      DELIVERED:'Delivered'
+    };
+
+    const trackingInput = document.getElementById('trackingInput');
+    const trackBtn = document.getElementById('trackBtn');
+    const results = document.getElementById('results');
+
+    function formatStatus(status) {
+      return status.replaceAll('_',' ');
+    }
+
+    function renderTracking(shipment) {
+      const currentIndex = statusSteps.indexOf(shipment.status);
+
+      const progressHTML = statusSteps.map((step, index) => {
+        let className = 'step';
+
+        if(index < currentIndex) className += ' complete';
+        if(index === currentIndex) className += ' current';
+
+        return `
+          <div class="${className}">
+            <div class="step-node">${index < currentIndex ? '✓' : index + 1}</div>
+            <div>
+              <strong>${stepLabels[step]}</strong>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const timelineHTML = [...shipment.timeline]
+        .sort((a,b) => new Date(b.datetime) - new Date(a.datetime))
+        .map((item,index) => `
+          <div class="timeline-item ${index === 0 ? 'latest':''}" style="animation-delay:${index * 50}ms">
+            <div class="timeline-marker"></div>
+            <div class="mono">${item.datetime}</div>
+            <div>
+              <strong>${item.event}</strong>
+              <div class="timeline-location">${item.location}</div>
+            </div>
+          </div>
+        `).join('');
+
+      results.innerHTML = `
+        <div class="shipment-header glass">
+          <div>
+            <p style="color:var(--text-secondary)">Tracking Number</p>
+            <h2 class="mono" style="margin:.4rem 0 1rem;">${shipment.awb}</h2>
+            <div class="status-badge status-${shipment.status}">
+              <div class="status-dot"></div>
+              ${formatStatus(shipment.status)}
+            </div>
+
+            <div class="route">
+              ${shipment.sender.city} ➜ ${shipment.receiver.city}
+            </div>
+          </div>
+
+          <div>
+            <p style="color:var(--text-secondary)">Estimated Delivery</p>
+            <h2>${shipment.expectedDelivery}</h2>
+
+            <div class="chip-row">
+              <div class="chip">${shipment.service}</div>
+              <div class="chip">${shipment.weight}</div>
+              <div class="chip">${shipment.dimensions}</div>
+            </div>
+
+            <div class="action-row">
+              <button class="secondary-btn" onclick="copyAWB('${shipment.awb}')">Copy AWB</button>
+              <button class="secondary-btn" onclick="window.print()">Print / Download</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-wrapper glass">
+            <div class="progress">
+              ${progressHTML}
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-section">
+          <div class="timeline-card glass">
+            <h3 style="margin-bottom:1rem;">Shipment Timeline</h3>
+            ${timelineHTML}
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card glass">
+            <div>📍</div>
+            <div class="info-label">Origin</div>
+            <h3>${shipment.sender.city}</h3>
+          </div>
+
+          <div class="info-card glass">
+            <div>🏁</div>
+            <div class="info-label">Destination</div>
+            <h3>${shipment.receiver.city}</h3>
+          </div>
+
+          <div class="info-card glass">
+            <div>🚚</div>
+            <div class="info-label">Service</div>
+            <h3>${shipment.service}</h3>
+          </div>
+
+          <div class="info-card glass">
+            <div>⚖️</div>
+            <div class="info-label">Weight</div>
+            <h3>${shipment.weight}</h3>
+          </div>
+
+          <div class="info-card glass">
+            <div>📦</div>
+            <div class="info-label">Dimensions</div>
+            <h3>${shipment.dimensions}</h3>
+          </div>
+
+          <div class="info-card glass">
+            <div>🔖</div>
+            <div class="info-label">Reference No.</div>
+            <h3 class="mono">${shipment.awb}</h3>
+          </div>
+        </div>
+      `;
+
+      results.classList.add('show');
+      results.scrollIntoView({ behavior:'smooth' });
+    }
+
+    function renderError() {
+      results.innerHTML = `
+        <div class="error-state glass">
+          <div style="font-size:3rem; margin-bottom:1rem;">⚠️</div>
+          <h2>No shipment found for this tracking number</h2>
+          <p style="color:var(--text-secondary); margin:1rem 0 2rem;">Please verify your AWB and try again.</p>
+          <button class="track-btn" onclick="resetTracking()">Try Again</button>
+        </div>
+      `;
+
+      results.classList.add('show');
+    }
+
+    function resetTracking() {
+      trackingInput.focus();
+      results.classList.remove('show');
+    }
+
+    function trackShipment() {
+      const awb = trackingInput.value.trim().toUpperCase();
+
+      if(!awb) return;
+
+      trackBtn.innerHTML = '<span class="loading-spinner"></span>';
+      trackBtn.disabled = true;
+
+      setTimeout(() => {
+        const shipment = window.shipmentDB.find(item => item.awb === awb);
+
+        if(shipment) {
+          renderTracking(shipment);
+        } else {
+          renderError();
+        }
+
+        trackBtn.innerHTML = 'TRACK';
+        trackBtn.disabled = false;
+      }, 500);
+    }
+
+    trackBtn.addEventListener('click', trackShipment);
+
+    trackingInput.addEventListener('keydown', e => {
+      if(e.key === 'Enter') trackShipment();
+    });
+
+    window.copyAWB = function(awb) {
+      navigator.clipboard.writeText(awb);
+      alert('AWB copied to clipboard');
+    }
+
+    const adminModal = document.getElementById('adminModal');
+
+    document.getElementById('adminTrigger').addEventListener('click', e => {
+      e.preventDefault();
+      adminModal.classList.add('show');
+    });
+
+    adminModal.addEventListener('click', e => {
+      if(e.target === adminModal) {
+        adminModal.classList.remove('show');
+      }
+    });
+
+    const loginCard = document.getElementById('loginCard');
+
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+      const error = document.getElementById('loginError');
+
+      if(username === 'admin' && password === 'admin123') {
+        localStorage.setItem('swiftpath_admin', 'true');
+        adminModal.classList.remove('show');
+        showAdmin();
+      } else {
+        error.classList.remove('hidden');
+        loginCard.classList.add('shake');
+        setTimeout(() => loginCard.classList.remove('shake'), 400);
+      }
+    });
+
+    function showAdmin() {
+      document.getElementById('publicPage').style.display = 'none';
+      document.querySelector('.footer').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      renderDashboard();
+      renderShipmentTable();
+    }
+
+    function logout() {
+      localStorage.removeItem('swiftpath_admin');
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('publicPage').style.display = 'block';
+      document.querySelector('.footer').style.display = 'flex';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('adminLogoutTop').addEventListener('click', logout);
+
+    function renderDashboard() {
+      const total = window.shipmentDB.length;
+      const transit = window.shipmentDB.filter(s => s.status === 'IN_TRANSIT').length;
+      const delivered = window.shipmentDB.filter(s => s.status === 'DELIVERED').length;
+      const pending = window.shipmentDB.filter(s => s.status !== 'DELIVERED').length;
+
+      document.getElementById('kpiGrid').innerHTML = `
+        <div class="kpi-card glass"><h2>${total}</h2><p>Total Shipments</p></div>
+        <div class="kpi-card glass"><h2>${transit}</h2><p>In Transit</p></div>
+        <div class="kpi-card glass"><h2>${delivered}</h2><p>Delivered</p></div>
+        <div class="kpi-card glass"><h2>${pending}</h2><p>Pending</p></div>
+      `;
+
+      document.getElementById('recentTable').innerHTML = window.shipmentDB.slice(0,5).map(s => `
+        <tr>
+          <td class="mono">${s.awb}</td>
+          <td><span class="status-badge status-${s.status}">${formatStatus(s.status)}</span></td>
+          <td>${s.sender.city}</td>
+          <td>${s.receiver.city}</td>
+          <td>${s.bookedDate}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderShipmentTable(filterText = '', filterStatus = 'ALL') {
+      const tbody = document.getElementById('shipmentTable');
+
+      const filtered = window.shipmentDB.filter(s => {
+        const textMatch = s.awb.toLowerCase().includes(filterText.toLowerCase()) ||
+          s.sender.city.toLowerCase().includes(filterText.toLowerCase()) ||
+          s.receiver.city.toLowerCase().includes(filterText.toLowerCase());
+
+        const statusMatch = filterStatus === 'ALL' || s.status === filterStatus;
+
+        return textMatch && statusMatch;
+      });
+
+      tbody.innerHTML = filtered.map((s,index) => `
+        <tr>
+          <td class="mono">${s.awb}</td>
+          <td><span class="status-badge status-${s.status}">${formatStatus(s.status)}</span></td>
+          <td>${s.sender.city}</td>
+          <td>${s.receiver.city}</td>
+          <td>${s.bookedDate}</td>
+          <td><button class="track-btn" style="height:42px; min-width:90px;" onclick="editShipment(${index})">Edit</button></td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('searchShipment').addEventListener('input', e => {
+      renderShipmentTable(e.target.value, document.getElementById('statusFilter').value);
+    });
+
+    document.getElementById('statusFilter').addEventListener('change', e => {
+      renderShipmentTable(document.getElementById('searchShipment').value, e.target.value);
+    });
+
+    document.querySelectorAll('.sidebar-item[data-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        btn.classList.add('active');
+
+        ['dashboardView','shipmentsView','addShipmentView'].forEach(id => {
+          document.getElementById(id).classList.add('hidden');
+        });
+
+        document.getElementById(btn.dataset.view).classList.remove('hidden');
+      });
+    });
+
+    function addEventRow(data = {}) {
+      const container = document.getElementById('eventsContainer');
+
+      const row = document.createElement('div');
+      row.className = 'event-row';
+      row.innerHTML = `
+        <input type="datetime-local" class="eventDate" value="${data.datetime ? data.datetime.replace(' ','T') : ''}">
+        <input type="text" class="eventLocation" placeholder="Location" value="${data.location || ''}">
+        <input type="text" class="eventDescription" placeholder="Event Description" value="${data.event || ''}">
+      `;
+
+      container.appendChild(row);
+    }
+
+    document.getElementById('addEventBtn').addEventListener('click', () => addEventRow());
+
+    addEventRow();
+
+    document.getElementById('shipmentForm').addEventListener('submit', e => {
+      e.preventDefault();
+
+      const requiredFields = ['awb','senderName','receiverName','originCity','destinationCity'];
+      let valid = true;
+
+      requiredFields.forEach(id => {
+        const field = document.getElementById(id);
+
+        if(!field.value.trim()) {
+          field.style.borderColor = 'var(--danger)';
+          valid = false;
+        } else {
+          field.style.borderColor = 'var(--border)';
+        }
+      });
+
+      if(!valid) {
+        alert('Please fill all required fields');
+        return;
       }
 
-    ]
+      const shipment = {
+        awb: document.getElementById('awb').value,
+        status: document.getElementById('currentStatus').value,
+        sender: {
+          name: document.getElementById('senderName').value,
+          phone: document.getElementById('senderPhone').value,
+          city: document.getElementById('originCity').value
+        },
+        receiver: {
+          name: document.getElementById('receiverName').value,
+          phone: document.getElementById('receiverPhone').value,
+          city: document.getElementById('destinationCity').value
+        },
+        service: document.getElementById('serviceType').value,
+        weight: document.getElementById('weight').value,
+        dimensions: document.getElementById('dimensions').value,
+        bookedDate: new Date().toISOString().split('T')[0],
+        expectedDelivery: document.getElementById('deliveryDate').value,
+        timeline: [...document.querySelectorAll('.event-row')].map(row => ({
+          datetime: row.querySelector('.eventDate').value.replace('T',' '),
+          location: row.querySelector('.eventLocation').value,
+          event: row.querySelector('.eventDescription').value
+        }))
+      };
 
-  };
+      const editIndex = document.getElementById('editIndex').value;
 
-  try {
+      if(editIndex) {
+        window.shipmentDB[editIndex] = shipment;
+      } else {
+        window.shipmentDB.unshift(shipment);
+      }
 
-    await addDoc(
-      collection(db, "shipments"),
-      shipment
-    );
+      renderDashboard();
+      renderShipmentTable();
 
-    alert('Shipment Saved Successfully');
+      alert('Shipment saved successfully');
+      e.target.reset();
+      document.getElementById('eventsContainer').innerHTML = '';
+      addEventRow();
+      document.getElementById('editIndex').value = '';
+    });
 
-    e.target.reset();
+    window.editShipment = function(index) {
+      const shipment = window.shipmentDB[index];
 
-  } catch(error) {
+      document.querySelector('[data-view="addShipmentView"]').click();
 
-    console.error(error);
+      document.getElementById('editIndex').value = index;
+      document.getElementById('awb').value = shipment.awb;
+      document.getElementById('senderName').value = shipment.sender.name;
+      document.getElementById('senderPhone').value = shipment.sender.phone;
+      document.getElementById('receiverName').value = shipment.receiver.name;
+      document.getElementById('receiverPhone').value = shipment.receiver.phone;
+      document.getElementById('originCity').value = shipment.sender.city;
+      document.getElementById('destinationCity').value = shipment.receiver.city;
+      document.getElementById('serviceType').value = shipment.service;
+      document.getElementById('weight').value = shipment.weight;
+      document.getElementById('dimensions').value = shipment.dimensions;
+      document.getElementById('deliveryDate').value = shipment.expectedDelivery;
+      document.getElementById('currentStatus').value = shipment.status;
 
-    alert('Error saving shipment');
+      document.getElementById('eventsContainer').innerHTML = '';
+      shipment.timeline.forEach(event => addEventRow(event));
+    }
 
-  }
+    if(localStorage.getItem('swiftpath_admin') === 'true') {
+      showAdmin();
+    }
 
-});
-
-</script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCOW_Y-AZrirAoW3-RIafPmNJI1dlNPmLA",
-  authDomain: "tracking-twoway.firebaseapp.com",
-  projectId: "tracking-twoway",
-  storageBucket: "tracking-twoway.firebasestorage.app",
-  messagingSenderId: "445415365945",
-  appId: "1:445415365945:web:8eecd941fa27bfaaf39ce8"
-};
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
 </body>
 </html>
