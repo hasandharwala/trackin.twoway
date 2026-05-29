@@ -3180,12 +3180,12 @@
             details: $('dispDetails').value.trim(),
             createdAt: new Date().toISOString()
           });
-          showToast('Request submitted successfully!', 'success');
+          toast('Your request has been received. Our support team will be in touch with you shortly.', 'success');
           disputeForm.reset();
           disputeOverlay.classList.remove('show');
         } catch (err) {
           console.error(err);
-          showToast('Failed to submit request', 'error');
+          toast('Failed to submit request', 'error');
         }
         btn.textContent = 'Submit Request';
         btn.disabled = false;
