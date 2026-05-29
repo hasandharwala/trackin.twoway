@@ -2054,7 +2054,7 @@
                   </div>
                   <div class="field">
                     <label>Grand Total (₹)</label>
-                    <input type="number" step="0.01" id="fGrandAmt" placeholder="1200.00">
+                    <input type="number" step="0.01" id="fGrandAmt" placeholder="0.00" readonly style="background:var(--gray-100); cursor:not-allowed;">
                   </div>
                 </div>
 
@@ -2536,7 +2536,38 @@
       $('formSub').textContent   = 'Fill in the details below';
       $('saveBtn').textContent   = 'Save Shipment';
       evtCount = 0;
+
+      // Auto-fill defaults
+      let nextAwb = '7252530050';
+      if (allData.length > 0) {
+        let maxNum = -1;
+        let bestAwb = '';
+        allData.forEach(s => {
+          const match = s.awb.match(/(\d+)$/);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > maxNum) { maxNum = num; bestAwb = s.awb; }
+          }
+        });
+        if (bestAwb) {
+          nextAwb = bestAwb.replace(/(\d+)$/, match => {
+            return String(BigInt(match) + 1n).padStart(match.length, '0');
+          });
+        }
+      }
+      $('fAwb').value = nextAwb;
+      $('fBookDate').value = new Date().toISOString().split('T')[0];
+      $('fOrigin').value = 'Indore';
     }
+
+    // Auto-calculate Grand Total
+    function calcGrandTotal() {
+      const t = parseFloat($('fTotalAmt').value) || 0;
+      const p = parseFloat($('fPickupAmt').value) || 0;
+      $('fGrandAmt').value = (t + p).toFixed(2);
+    }
+    $('fTotalAmt').addEventListener('input', calcGrandTotal);
+    $('fPickupAmt').addEventListener('input', calcGrandTotal);
 
     $('cancelEditBtn').addEventListener('click', resetForm);
 
