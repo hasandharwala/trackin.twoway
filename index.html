@@ -2724,7 +2724,12 @@
           generateReceipt({ id: finalId, ...payload });
         }
 
-        resetForm();
+        if (!docId) {
+          $('editDocId').value = finalId;
+          $('cancelEditBtn').classList.remove('hidden');
+          $('formTitle').textContent = 'Edit Shipment';
+          $('formSub').textContent   = `Editing ${payload.awb}`;
+        }
       } catch (err) {
         console.error(err);
         toast('Error saving. Check console.', 'error');
@@ -2737,6 +2742,17 @@
     $('savePrintBtn').addEventListener('click', () => {
       window._shouldPrintAfterSave = true;
       $('shipForm').requestSubmit();
+    });
+
+    $('shipForm').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') {
+        e.preventDefault();
+        const focusables = Array.from($('shipForm').querySelectorAll('input:not([readonly]), select, button'));
+        const index = focusables.indexOf(e.target);
+        if (index > -1 && index < focusables.length - 1) {
+          focusables[index + 1].focus();
+        }
+      }
     });
 
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
