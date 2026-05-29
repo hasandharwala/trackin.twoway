@@ -2476,41 +2476,40 @@
       const phone = formatPhone(shipment.sender?.phone);
       if (!phone) { toast('No sender phone number to send WhatsApp.', 'error'); return; }
       const r = shipment.receipt || {};
-      const wave   = '\uD83D\uDC4B'; // 👋
-      const truck  = '\uD83D\uDE9A'; // 🚚
-      const box    = '\uD83D\uDCE6'; // 📦
-      const tag    = '\uD83D\uDD16'; // 🔖
-      const cal    = '\uD83D\uDCC5'; // 📅
-      const pin    = '\uD83D\uDCCD'; // 📍
-      const person = '\uD83D\uDC64'; // 👤
-      const money  = '\uD83D\uDCB0'; // 💰
-      const date   = '\uD83D\uDDD3\uFE0F'; // 🗓️
-      const pray   = '\uD83D\uDE4F'; // 🙏
-      const phone2 = '\uD83D\uDCDE'; // 📞
-      const div    = '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
+      const senderName   = (shipment.sender?.name || 'Customer').toUpperCase();
+      const receiverName = (shipment.receiver?.name || 'N/A').toUpperCase();
+      const fromCity     = (shipment.sender?.city || 'N/A').toUpperCase();
+      const toCity       = (shipment.receiver?.city || 'N/A').toUpperCase();
+      const bookDate     = r.bookDate ? new Date(r.bookDate).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'2-digit'}) : 'N/A';
+      const amount       = r.grandAmt ? r.grandAmt + '/-' : 'N/A';
+      const div          = '________';
+
       const msg = [
-        `Hello *${shipment.sender?.name || 'Customer'}* ${wave}`,
-        ``,
-        `Thank you for choosing *TWO WAY CARGO* ${truck}`,
-        `Your shipment has been successfully booked!`,
-        ``,
+        `Dear ${senderName}`,
+        `Thankyou For Choosing TWOWAY CARGO.`,
+        `Your shipment has been successfully booked with us.`,
+        ` `,
         div,
-        `${box} *BOOKING DETAILS*`,
-        div,
-        `${tag} AWB Number     : *${shipment.awb}*`,
-        `${cal} Booking Date   : *${r.bookDate ? new Date(r.bookDate).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}) : 'N/A'}*`,
-        `${pin} From           : *${shipment.sender?.city || 'N/A'}*`,
-        `${pin} To             : *${shipment.receiver?.city || 'N/A'}*`,
-        `${person} Receiver Name  : *${shipment.receiver?.name || 'N/A'}*`,
-        `${money} Total Amount   : *\u20B9${r.grandAmt || '0'}*`,
-        `${date} Exp. Delivery  : *${shipment.expectedDelivery || 'N/A'}*`,
-        div,
+        `BOOKING DETAILS`,
         ``,
-        `Track your shipment anytime at our website.`,
+        `Tracking ID: ${shipment.awb}`,
+        `Booking Date: ${bookDate}`,
+        `From: ${fromCity}`,
+        `To: ${toCity}`,
+        `Receiver: ${receiverName}`,
+        `Total Amount: ${amount}`,
+        div,
+        ` `,
+        `You can contact us anytime for shipment updates.`,
         ``,
-        `\u2014 *Team Two Way Cargo* ${pray}`,
-        `${phone2} 079097 25253`
+        `For support or tracking:`,
+        `7909725253`,
+        `twowaycargo.in`,
+        `contact@twowaycargo.in`,
+        ``,
+        `-Team Twoway Cargo`
       ].join('\n');
+
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
@@ -2518,38 +2517,25 @@
     function sendDeliveryWhatsApp(shipment) {
       const phone = formatPhone(shipment.sender?.phone);
       if (!phone) { toast('No sender phone number to send WhatsApp.', 'error'); return; }
-      const r = shipment.receipt || {};
-      const wave   = '\uD83D\uDC4B'; // 👋
-      const check  = '\u2705';       // ✅
-      const box    = '\uD83D\uDCE6'; // 📦
-      const tag    = '\uD83D\uDD16'; // 🔖
-      const pin    = '\uD83D\uDCCD'; // 📍
-      const person = '\uD83D\uDC64'; // 👤
-      const money  = '\uD83D\uDCB0'; // 💰
-      const pray   = '\uD83D\uDE4F'; // 🙏
-      const phone2 = '\uD83D\uDCDE'; // 📞
-      const div    = '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
+
       const msg = [
-        `Hello *${shipment.sender?.name || 'Customer'}* ${wave}`,
+        `Two Way Cargo - Delivery Update`,
         ``,
-        `Great news! Your shipment has been *successfully delivered* ${check}`,
+        `Good News!`,
         ``,
-        div,
-        `${box} *DELIVERY CONFIRMATION*`,
-        div,
-        `${tag} AWB Number     : *${shipment.awb}*`,
-        `${pin} From           : *${shipment.sender?.city || 'N/A'}*`,
-        `${pin} To             : *${shipment.receiver?.city || 'N/A'}*`,
-        `${person} Delivered To   : *${shipment.receiver?.name || 'N/A'}*`,
-        `${money} Total Amount   : *\u20B9${r.grandAmt || '0'}*`,
-        div,
+        `Your parcel has been delivered successfully.`,
         ``,
-        `Thank you for trusting *TWO WAY CARGO* ${pray}`,
-        `We look forward to serving you again!`,
+        `Thank you for choosing Two Way Cargo. We are happy to be a part of your delivery journey.`,
         ``,
-        `\u2014 *Team Two Way Cargo*`,
-        `${phone2} 079097 25253`
+        `We hope you were happy with our service. Your feedback means a lot to us and helps us serve you better`,
+        `Leave a Google Review: https://g.page/r/CbJkcehW2H9IEBM/review`,
+        ``,
+        `Mob: 7909725253`,
+        ``,
+        `Thank you for your trust and support.`,
+        `~Team Twoway Cargo`
       ].join('\n');
+
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
