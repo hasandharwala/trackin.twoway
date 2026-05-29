@@ -251,18 +251,24 @@
     }
 
     .hero-title {
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 900;
-      line-height: 1.03;
-      letter-spacing: -2.5px;
-      color: #0a2f7a; /* Logo Blue */
+      font-size: clamp(2.5rem, 6.5vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 20px;
       animation: fadeUp .7s .08s var(--ease-out) both;
       position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .hero-title .accent {
-      color: var(--red); /* Logo Red */
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .hero-sub {
@@ -279,10 +285,70 @@
     /* ══════════════════════════════════════════════════
        SEARCH BOX
     ══════════════════════════════════════════════════ */
+    @property --glow-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes border-spin {
+      to { --glow-angle: 360deg; }
+    }
+
     .search-wrap {
-      width: min(100%, 560px);
-      animation: fadeUp .7s .24s var(--ease-out) both;
+      width: min(100%, 750px);
+      animation: fadeUp .7s .24s var(--ease-out) both, border-spin 6s linear infinite;
       position: relative;
+      border-radius: 999px;
+      padding: 1.5px;
+      background: conic-gradient(
+        from var(--glow-angle),
+        transparent 0deg,
+        transparent 90deg,
+        rgba(220, 38, 38, 0.1) 130deg,
+        rgba(220, 38, 38, 1) 170deg,
+        rgba(255, 255, 255, 0.9) 178deg,
+        transparent 180deg,
+        transparent 270deg,
+        rgba(220, 38, 38, 0.1) 310deg,
+        rgba(220, 38, 38, 1) 350deg,
+        rgba(255, 255, 255, 0.9) 358deg,
+        transparent 360deg
+      ), var(--gray-200);
+      z-index: 0;
+      box-shadow: 0 10px 30px -10px rgba(220, 38, 38, 0.2);
+    }
+
+    /* Soft outer glow that follows the beam */
+    .search-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -1.5px;
+      border-radius: 999px;
+      background: conic-gradient(
+        from var(--glow-angle),
+        transparent 0deg,
+        transparent 90deg,
+        rgba(220, 38, 38, 0.1) 130deg,
+        rgba(220, 38, 38, 0.6) 170deg,
+        rgba(255, 255, 255, 0.5) 178deg,
+        transparent 180deg,
+        transparent 270deg,
+        rgba(220, 38, 38, 0.1) 310deg,
+        rgba(220, 38, 38, 0.6) 350deg,
+        rgba(255, 255, 255, 0.5) 358deg,
+        transparent 360deg
+      );
+      filter: blur(6px);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .search-wrap .search-box {
+      position: relative;
+      z-index: 1;
+      border: none;
+      background: var(--white);
     }
 
     .search-box {
@@ -1751,13 +1817,19 @@
     <section class="results" id="results"></section>
 
     <!-- FOOTER -->
-    <footer class="footer" id="footer">
-      <div class="footer-left">
-        <img src="logo.png" alt="Two Way Cargo and Movers">
-        <span class="footer-copy">© 2026 TWO WAY Cargo and Movers. All rights reserved.</span>
+    <footer class="footer" id="footer" style="display:flex; flex-direction:column; align-items:stretch; padding:15px 5% 15px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; width:100%;">
+        <div class="footer-left">
+          <img src="logo.png" alt="Two Way Cargo and Movers" style="height:50px; object-fit:contain;">
+        </div>
+        <div class="footer-right" style="text-align:right; display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:500; color:var(--gray-600);">
+          <div style="font-weight:700; color:var(--gray-900);">&#128222; 079097 25253</div>
+          <div><a href="mailto:contact@twowaycargo.in" style="color:inherit; text-decoration:none;">&#9993; contact@twowaycargo.in</a></div>
+          <div><a href="https://twowaycargo.in" target="_blank" style="color:inherit; text-decoration:none;">&#127760; twowaycargo.in</a></div>
+        </div>
       </div>
-      <div class="footer-right">
-        <a href="mailto:contact@twowaycargo.in">contact@twowaycargo.in</a>
+      <div style="margin-top:10px; font-size:10px; color:var(--gray-400); text-align:center; width:100%; border-top:1px solid var(--gray-100); padding-top:10px;">
+        &copy; 2026 TWO WAY Cargo and Movers. All rights reserved.
       </div>
     </footer>
 
