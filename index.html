@@ -2068,6 +2068,9 @@
                   <button type="submit" class="btn-save" id="saveBtn">
                     Save Shipment
                   </button>
+                  <button type="button" class="btn-save" id="savePrintBtn" style="background:var(--red); border-color:var(--red); margin-left:10px;">
+                    Save & Print
+                  </button>
                 </div>
               </form>
             </div>
@@ -2672,6 +2675,7 @@
       saveBtn.disabled = true;
 
       try {
+        let finalId = docId;
         if (docId) {
           await updateDoc(doc(db,'shipments',docId), payload);
           const i = allData.findIndex(s => s.id === docId);
@@ -2679,9 +2683,16 @@
           toast('Shipment updated!', 'success');
         } else {
           const ref = await addDoc(collection(db,'shipments'), payload);
-          allData.unshift({ id: ref.id, ...payload });
+          finalId = ref.id;
+          allData.unshift({ id: finalId, ...payload });
           toast('Shipment saved!', 'success');
         }
+        
+        if (window._shouldPrintAfterSave) {
+          window._shouldPrintAfterSave = false;
+          generateReceipt({ id: finalId, ...payload });
+        }
+
         resetForm();
       } catch (err) {
         console.error(err);
@@ -2690,6 +2701,11 @@
 
       saveBtn.textContent = docId ? 'Update Shipment' : 'Save Shipment';
       saveBtn.disabled = false;
+    });
+
+    $('savePrintBtn').addEventListener('click', () => {
+      window._shouldPrintAfterSave = true;
+      $('shipForm').requestSubmit();
     });
 
     /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
