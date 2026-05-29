@@ -1701,7 +1701,7 @@
       </div>
 
       <h1 class="hero-title">
-        Know exactly where<br>your <span class="accent">shipment</span> is.
+        KNOW EXACTLY WHERE<br>YOUR <span class="accent">SHIPMENT</span> IS.
       </h1>
 
       <p class="hero-sub">
@@ -2876,23 +2876,26 @@
       
       return `
         <div class="rcpt-copy">
-          <div class="rcpt-title-banner">CONSIGNMENT NOTE / LORRY RECEIPT</div>
-          
+
+          <div class="rcpt-title-banner" style="font-size:9px; letter-spacing:3px;">CONSIGNMENT NOTE</div>
+
           <div class="rcpt-header">
             <div class="rcpt-logo">
-              <img src="logo.png" alt="Two Way Cargo">
-              <div class="rcpt-addr">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> 
-                <div>BUS STAND, AB ROAD RAU<br>INDORE, MP 453331</div>
+              <img src="logo.png" alt="Two Way Cargo" style="height:60px; margin-bottom:4px; display:block;">
+              <div class="rcpt-addr" style="font-size:8px; line-height:1.5;">
+                BUS STAND, AB ROAD RAU, INDORE, MP 453331
+              </div>
+              <div style="font-size:8px; color:#475569; margin-top:1px;">
+                &#128222; 079097 25253 &nbsp;|&nbsp; &#9993; contact@twowaycargo.in
               </div>
             </div>
-            
+
             <div class="rcpt-meta">
               <div class="rcpt-copy-type ${isReceiver ? 'receiver' : ''}">${copyType}</div>
-              <div class="rcpt-meta-grid">
-                <div class="rcpt-meta-lbl">AWB NO:</div><div class="rcpt-meta-val">${s.awb}</div>
-                <div class="rcpt-meta-lbl">DATE:</div><div class="rcpt-meta-val">${r.bookDate ? new Date(r.bookDate).toLocaleDateString('en-GB') : '—'}</div>
-                <div class="rcpt-meta-lbl">SERVICE:</div><div class="rcpt-meta-val" style="color:var(--red);">${s.service || 'PREMIUM'}</div>
+              <div class="rcpt-meta-grid" style="font-size:11px; padding:10px 14px; gap:7px 20px; margin-top:6px; min-width:160px;">
+                <div class="rcpt-meta-lbl">AWB NO:</div><div class="rcpt-meta-val" style="font-size:14px; font-weight:800; letter-spacing:0.5px;">${s.awb}</div>
+                <div class="rcpt-meta-lbl">DATE:</div><div class="rcpt-meta-val" style="font-size:12px; font-weight:700;">${r.bookDate ? new Date(r.bookDate).toLocaleDateString('en-GB') : '&#8212;'}</div>
+                <div class="rcpt-meta-lbl">SERVICE:</div><div class="rcpt-meta-val" style="color:var(--red); font-size:12px; font-weight:700;">${s.service || 'PREMIUM'}</div>
               </div>
             </div>
           </div>
@@ -2901,17 +2904,17 @@
             <div class="rcpt-party-box">
               <div class="rcpt-party-lbl">CONSIGNOR (SENDER)</div>
               <div class="rcpt-party-details">
-                <strong style="font-size:11px; text-transform:uppercase;">${s.sender?.name || '—'}</strong><br>
-                📞 ${s.sender?.phone || '—'}<br>
-                📍 ${s.sender?.city || '—'}
+                <strong style="font-size:11px; text-transform:uppercase;">${s.sender?.name || '&#8212;'}</strong><br>
+                &#128222; ${s.sender?.phone || '&#8212;'}<br>
+                &#128205; ${s.sender?.city || '&#8212;'}
               </div>
             </div>
             <div class="rcpt-party-box">
               <div class="rcpt-party-lbl">CONSIGNEE (RECEIVER)</div>
               <div class="rcpt-party-details">
-                <strong style="font-size:11px; text-transform:uppercase;">${s.receiver?.name || '—'}</strong><br>
-                📞 ${s.receiver?.phone || '—'}<br>
-                📍 ${s.receiver?.city || '—'}
+                <strong style="font-size:11px; text-transform:uppercase;">${s.receiver?.name || '&#8212;'}</strong><br>
+                &#128222; ${s.receiver?.phone || '&#8212;'}<br>
+                &#128205; ${s.receiver?.city || '&#8212;'}
               </div>
             </div>
             <div class="rcpt-barcode-box">
@@ -2960,18 +2963,21 @@
                 <li>Delivery may be delayed due to unforeseen emergencies such as vehicle breakdown, accidents, traffic conditions, weather, or other operational issues beyond our control.</li>
               </ol>
               <div class="rcpt-alert">This consignment is not a Tax Invoice.</div>
-              <div style="margin-top:6px; font-weight:700; color:var(--red);">Customer Support: 079097 25253</div>
+              <div style="margin-top:5px; font-weight:700; color:var(--red); font-size:8px;">Customer Support: 079097 25253 &nbsp;|&nbsp; contact@twowaycargo.in</div>
             </div>
             
+            ${!isReceiver ? `
             <div class="rcpt-totals">
               <div class="rt-row"><div class="rt-lbl">TOTAL AMOUNT</div><div class="rt-val">₹ ${r.totalAmt || '0.00'}</div></div>
               <div class="rt-row"><div class="rt-lbl">PICKUP CHARGE</div><div class="rt-val">₹ ${r.pickupAmt || '0.00'}</div></div>
               <div class="rt-row"><div class="rt-lbl">GRAND TOTAL</div><div class="rt-val" style="font-size:12px;">₹ ${r.grandAmt || '0.00'}</div></div>
             </div>
+            ` : ''}
 
-            <div class="rcpt-sigs">
+
+            <div class="rcpt-sigs" style="${isReceiver ? 'flex:3;' : ''}">
               <div class="rcpt-sig-line"></div>
-              <div class="rcpt-sig-lbl">${isReceiver ? 'RECEIVER SIGNATURE & SEAL' : 'AUTHORIZED SIGNATORY'}</div>
+              <div class="rcpt-sig-lbl">${isReceiver ? 'RECEIVER SIGNATURE &amp; SEAL' : 'AUTHORIZED SIGNATORY'}</div>
             </div>
           </div>
         </div>
