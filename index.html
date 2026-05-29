@@ -2461,12 +2461,88 @@
         : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🔍</div><p>Nothing found</p></div></td></tr>`;
     }
 
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       WHATSAPP MESSAGE HELPER
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+    function formatPhone(phone) {
+      if (!phone) return null;
+      let p = phone.toString().replace(/\D/g, '');
+      if (p.startsWith('0')) p = p.slice(1);
+      if (!p.startsWith('91') && p.length === 10) p = '91' + p;
+      return p.length >= 11 ? p : null;
+    }
+
+    function sendBookingWhatsApp(shipment) {
+      const phone = formatPhone(shipment.sender?.phone);
+      if (!phone) { toast('No sender phone number to send WhatsApp.', 'error'); return; }
+      const r = shipment.receipt || {};
+      const msg = [
+        `Hello *${shipment.sender?.name || 'Customer'}* 👋`,
+        ``,
+        `Thank you for choosing *TWO WAY CARGO* 🚚`,
+        `Your shipment has been successfully booked!`,
+        ``,
+        `━━━━━━━━━━━━━━━━━━━━━━`,
+        `📦 *BOOKING DETAILS*`,
+        `━━━━━━━━━━━━━━━━━━━━━━`,
+        `🔖 AWB Number     : *${shipment.awb}*`,
+        `📅 Booking Date   : *${r.bookDate ? new Date(r.bookDate).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}) : 'N/A'}*`,
+        `📍 From           : *${shipment.sender?.city || 'N/A'}*`,
+        `📍 To             : *${shipment.receiver?.city || 'N/A'}*`,
+        `👤 Receiver Name  : *${shipment.receiver?.name || 'N/A'}*`,
+        `💰 Total Amount   : *₹${r.grandAmt || '0'}*`,
+        `🗓️ Exp. Delivery  : *${shipment.expectedDelivery || 'N/A'}*`,
+        `━━━━━━━━━━━━━━━━━━━━━━`,
+        ``,
+        `Track your shipment anytime at our website.`,
+        ``,
+        `— *Team Two Way Cargo* 🙏`,
+        `📞 079097 25253`
+      ].join('\n');
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    function sendDeliveryWhatsApp(shipment) {
+      const phone = formatPhone(shipment.sender?.phone);
+      if (!phone) { toast('No sender phone number to send WhatsApp.', 'error'); return; }
+      const r = shipment.receipt || {};
+      const msg = [
+        `Hello *${shipment.sender?.name || 'Customer'}* 👋`,
+        ``,
+        `Great news! Your shipment has been *successfully delivered* ✅`,
+        ``,
+        `━━━━━━━━━━━━━━━━━━━━━━`,
+        `📦 *DELIVERY CONFIRMATION*`,
+        `━━━━━━━━━━━━━━━━━━━━━━`,
+        `🔖 AWB Number     : *${shipment.awb}*`,
+        `📍 From           : *${shipment.sender?.city || 'N/A'}*`,
+        `📍 To             : *${shipment.receiver?.city || 'N/A'}*`,
+        `👤 Delivered To   : *${shipment.receiver?.name || 'N/A'}*`,
+        `💰 Total Amount   : *₹${r.grandAmt || '0'}*`,
+        `━━━━━━━━━━━━━━━━━━━━━━`,
+        ``,
+        `Thank you for trusting *TWO WAY CARGO* 🙏`,
+        `We look forward to serving you again!`,
+        ``,
+        `— *Team Two Way Cargo*`,
+        `📞 079097 25253`
+      ].join('\n');
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
     window.quickUpdateStatus = async (id, newStatus) => {
       try {
         await updateDoc(doc(db, 'shipments', id), { status: newStatus });
         toast('Status updated to ' + STATUS_LABELS[newStatus], 'success');
         const s = allData.find(x => x.id === id);
-        if (s) s.status = newStatus;
+        if (s) {
+          s.status = newStatus;
+          if (newStatus === 'DELIVERED') {
+            sendDeliveryWhatsApp(s);
+          }
+        }
         renderKPIs();
         renderRecent();
         renderAllTable();
@@ -2716,7 +2792,8 @@
           const ref = await addDoc(collection(db,'shipments'), payload);
           finalId = ref.id;
           allData.unshift({ id: finalId, ...payload });
-          toast('Shipment saved!', 'success');
+          toast('Shipment saved! Opening WhatsApp...', 'success');
+          sendBookingWhatsApp({ id: finalId, ...payload });
         }
         
         if (window._shouldPrintAfterSave) {
